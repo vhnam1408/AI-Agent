@@ -1,0 +1,5 @@
+Kế hoạch học tập và deadline học kỳ này:
+1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.
+2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.
+3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.
+4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.

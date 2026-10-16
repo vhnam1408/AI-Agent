@@ -1,0 +1,45 @@
+# Compiled output
+build/
+out/
+*.exe
+*.out
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.db
+*.ics
+
+# CMake generated
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# IDE & Editor
+.vscode/
+.idea/
+.vs/
+*.user
+*.suo
+
+# vcpkg
+vcpkg_installed/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sample assets được giữ lại trong repo
+!assets/.gitkeep
+!assets/timetable.png
+!assets/input.txt
+
+# Generated runtime outputs
+output/
+*_output.json
