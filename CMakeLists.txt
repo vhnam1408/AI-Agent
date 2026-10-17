@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Project Declaration — TASK-01 (LLMClient & Multimodal Vision)
+# Project: EduSchedule-Agent (Milestone G1: Architecture Freeze - TASK-05)
 # ══════════════════════════════════════════════════════════════════════════════
 project(
     ai_agent
     VERSION     1.0.0
-    DESCRIPTION "TASK-01: Ollama Multimodal Client PoC (OOP Assignment)"
+    DESCRIPTION "EduSchedule-Agent: Milestone G1 - Architecture Freeze (TASK-05)"
     LANGUAGES   CXX
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# C++ Standard — C++17
+# C++ Standard — C++23 (Backward-compatible with C++20)
 # ══════════════════════════════════════════════════════════════════════════════
-set(CMAKE_CXX_STANDARD          17)
+set(CMAKE_CXX_STANDARD          23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS        OFF)
 
@@ -21,7 +21,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
 endif()
 
-# Tự động nhận diện thư viện trong MSYS2 UCRT64 / MINGW64 trên Windows nếu có
+# MSYS2 / UCRT64 prefix paths on Windows
 if(WIN32)
     if(EXISTS "C:/msys64/ucrt64")
         list(APPEND CMAKE_PREFIX_PATH "C:/msys64/ucrt64")
@@ -31,18 +31,27 @@ if(WIN32)
     endif()
 endif()
 
-# Tìm kiếm thư viện libcurl
+# ══════════════════════════════════════════════════════════════════════════════
+# Dependencies: CURL & SQLite3
+# ══════════════════════════════════════════════════════════════════════════════
 find_package(CURL REQUIRED)
+find_package(SQLite3 QUIET)
 
-# Thư mục include (Header-only nlohmann/json.hpp có sẵn trong include/nlohmann/)
+# ══════════════════════════════════════════════════════════════════════════════
+# Include Directories: include/ and src/
+# ══════════════════════════════════════════════════════════════════════════════
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CURL_INCLUDE_DIRS}
 )
 
+if(SQLite3_FOUND)
+    include_directories(${SQLite3_INCLUDE_DIRS})
+endif()
+
 # ══════════════════════════════════════════════════════════════════════════════
-# Executable: ai_agent (Bản thử nghiệm API TASK-01: Text & Vision)
+# Executable Target: ai_agent
 # ══════════════════════════════════════════════════════════════════════════════
 add_executable(ai_agent
     src/main.cpp
@@ -53,6 +62,14 @@ target_link_libraries(ai_agent PRIVATE
     CURL::libcurl
 )
 
+if(SQLite3_FOUND)
+    if(TARGET SQLite3::SQLite3)
+        target_link_libraries(ai_agent PRIVATE SQLite3::SQLite3)
+    elseif(TARGET SQLite::SQLite3)
+        target_link_libraries(ai_agent PRIVATE SQLite::SQLite3)
+    endif()
+endif()
+
 if(WIN32)
     target_link_libraries(ai_agent PRIVATE
         ws2_32
@@ -60,3 +77,13 @@ if(WIN32)
         crypt32
     )
 endif()
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Alias executable: edu_schedule_poc (backward-compatible with TASK-01)
+# ══════════════════════════════════════════════════════════════════════════════
+add_custom_command(TARGET ai_agent POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:ai_agent>
+    ${CMAKE_BINARY_DIR}/edu_schedule_poc.exe
+    COMMENT "Generating edu_schedule_poc.exe alias"
+)

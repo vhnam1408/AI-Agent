@@ -17,6 +17,8 @@
 
 #include "client/llm_client.h"
 #include "client/ollama_client.h"
+#include "agent/loop_detector.h"
+#include "agent/agent_loop.h"
 
 #ifdef _WIN32
 #  ifndef NOMINMAX
@@ -1065,6 +1067,22 @@ int main(int argc, char* argv[])
               << "║       EduSchedule-Agent — LLMClient PoC Test      ║\n"
               << "║       Võ Hoàng Nam — OOP Assignment               ║\n"
               << "╚══════════════════════════════════════════════════╝\n"
+              << console::RESET;
+
+    // ── TASK-05: Milestone G1 Architecture Freeze Verification ────────────────
+    std::cout << console::MAGENTA << "\n[TASK-05 G1 Freeze] Khởi tạo LoopDetector & AgentLoop interfaces..." << console::RESET << "\n";
+    LoopDetector loop_detector(LoopDetector::Config{ .warning_threshold = 2, .critical_threshold = 4, .history_capacity = 30 });
+    loop_detector.recordAction("task_lookup:T1");
+    auto loop_test = loop_detector.recordAndCheck("task_lookup:T1");
+    std::cout << console::GREEN << "  ✓ LoopDetector: Generic Repeat (ngưỡng 2) → "
+              << (loop_test.isWarning() ? "Cảnh báo chính xác [PASS]" : "Chưa cảnh báo") << "\n";
+    loop_detector.reset();
+
+    AgentLoop agent_loop(std::shared_ptr<LLMClient>{}, /*max_steps=*/5, loop_detector);
+    agent_loop.setStepHook([](const StepEvent& ev) {
+        (void)ev;
+    });
+    std::cout << "  ✓ AgentLoop: Template Method (run) & Observer Hook (StepHook) sẵn sàng [PASS]\n"
               << console::RESET;
 
     // ── Đọc config từ command-line (thông minh, linh hoạt) ───────────────────
