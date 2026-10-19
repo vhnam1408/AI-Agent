@@ -14,7 +14,6 @@ using TimePoint = std::chrono::system_clock::time_point;
 struct Task {
     std::string id;
     std::string title;
-    std::string description;
     std::string courseId;
 
     std::optional<TimePoint> deadline;
@@ -23,7 +22,7 @@ struct Task {
     int remainingMinutes = 0;
 
     Priority priority = Priority::Mid;
-    TaskStatus status = TaskStatus::Pending;
+    TaskStatus status = TaskStatus::Todo;
 
-    std::vector<std::string> dependencyIds;
+    std::vector<std::string> dependencies;
 };
