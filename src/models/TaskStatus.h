@@ -2,9 +2,9 @@
 #pragma once
 
 enum class TaskStatus {
-    Pending,
+    Todo,
     InProgress,
-    Completed,
+    Done,
     Blocked,
     Cancelled
 };
