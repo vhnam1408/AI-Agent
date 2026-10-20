@@ -1,21 +1,25 @@
-
 #pragma once
 
 #include "../agent/Tool.h"
 #include "../models/Task.h"
 
-class TaskLookupTool : public ITool {
-private:
-    const Task& task;
+namespace edu_schedule {
 
+class TaskLookupTool final : public ITool {
 public:
     explicit TaskLookupTool(const Task& task);
 
-    std::string name() const override;
+    [[nodiscard]]
+    std::string_view name() const noexcept override;
 
-    std::string description() const override;
+    [[nodiscard]]
+    std::string_view description() const noexcept override;
 
-    std::string execute(
-        const std::string& input
-    ) override;
+    [[nodiscard]]
+    ToolResult execute(std::string_view input) override;
+
+private:
+    const Task& task_;
 };
+
+} // namespace edu_schedule
