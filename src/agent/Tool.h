@@ -6,7 +6,7 @@
 #include <string_view>
 #include <type_traits>
 
-namespace edu {
+namespace edu_schedule {
 
 struct ToolResult {
     bool success = false;
@@ -28,4 +28,4 @@ concept ToolType =
     std::derived_from<T, ITool> &&
     !std::is_abstract_v<T>;
 
-} // namespace edu
+} // namespace edu_schedule

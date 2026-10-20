@@ -1,20 +1,15 @@
-
 #pragma once
 
 #include "../models/Task.h"
-#include "../models/Priority.h"
-#include "../models/TaskStatus.h"
+#include "../models/TimePoint.h"
 
-#include <algorithm>
-#include <chrono>
 #include <string>
 #include <string_view>
 #include <vector>
 
-namespace edu {
+namespace edu_schedule {
 
 using TaskId = std::string;
-using TimePoint = std::chrono::system_clock::time_point;
 
 struct TimeSlot {
     TimePoint start;
@@ -60,7 +55,6 @@ struct Schedule {
     std::vector<StudySession> studySessions;
 };
 
-// Kết quả lập lịch theo quy tắc trong tài liệu.
 enum class SchedulingStatus {
     Scheduled,
     PartiallyScheduled,
@@ -74,7 +68,6 @@ struct SchedulingResult {
     std::vector<std::string> reasons;
 };
 
-// Kiểm tra phiên học có đè lên sự kiện cố định hay không.
 [[nodiscard]]
 inline bool conflictsWithFixedEvent(
     const StudySession& session,
@@ -83,17 +76,14 @@ inline bool conflictsWithFixedEvent(
     return session.time.overlaps(event.time);
 }
 
-// Kiểm tra phiên học có trùng với phiên học khác hay không.
 [[nodiscard]]
 inline bool conflictsWithSession(
     const StudySession& first,
     const StudySession& second
 ) noexcept {
-    // Không xem chính phiên đó là xung đột.
     if (first.id == second.id) {
         return false;
     }
-
     return first.time.overlaps(second.time);
 }
 
@@ -107,4 +97,4 @@ inline bool isValidDuration(int minutes) noexcept {
     return minutes > 0;
 }
 
-} // namespace edu
+} // namespace edu_schedule

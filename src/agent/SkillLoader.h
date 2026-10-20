@@ -7,7 +7,7 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace edu {
+namespace edu_schedule {
 
 struct Skill {
     std::string name;
@@ -33,4 +33,4 @@ private:
     std::filesystem::path skillDirectory_;
 };
 
-} // namespace edu
+} // namespace edu_schedule

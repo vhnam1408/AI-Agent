@@ -1,22 +1,25 @@
-
 #include "TaskLookupTool.h"
 
+namespace edu_schedule {
+
 TaskLookupTool::TaskLookupTool(const Task& task)
-    : task(task) {
+    : task_(task) {
 }
 
-std::string TaskLookupTool::name() const {
+std::string_view TaskLookupTool::name() const noexcept {
     return "task_lookup";
 }
 
-std::string TaskLookupTool::description() const {
+std::string_view TaskLookupTool::description() const noexcept {
     return "Find a task by ID";
 }
 
-std::string TaskLookupTool::execute(const std::string& input) {
-    if (input == task.id) {
-        return "Found task: " + task.title;
+ToolResult TaskLookupTool::execute(std::string_view input) {
+    if (input == task_.id) {
+        return {true, "Found task: " + task_.title};
     }
 
-    return "Task not found";
+    return {false, "Task not found"};
 }
+
+} // namespace edu_schedule
