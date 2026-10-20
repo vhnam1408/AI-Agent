@@ -2,20 +2,16 @@
 #pragma once
 
 #include "../models/Task.h"
-#include "../models/Priority.h"
-#include "../models/TaskStatus.h"
+#include "../models/domain_types.h"
 
-#include <algorithm>
-#include <chrono>
 #include <string>
 #include <string_view>
 #include <vector>
 
-namespace edu {
+namespace edu_schedule {
 
-using TaskId = std::string;
-using TimePoint = std::chrono::system_clock::time_point;
-
+// QUY ƯỚC BẮT BUỘC: mọi khoảng thời gian là nửa mở [start, end) và start < end.
+// Vì vậy 09:00-10:00 và 10:00-11:00 không chồng lấn.
 struct TimeSlot {
     TimePoint start;
     TimePoint end;
@@ -31,14 +27,15 @@ struct TimeSlot {
     }
 };
 
-// Sự kiện chiếm thời gian cố định, ví dụ giờ học hoặc cuộc họp.
+// QUY ƯỚC BẮT BUỘC: Scheduler không được tự di chuyển, rút ngắn hoặc xóa
+// FixedEvent. FixedEvent có thể nằm ngoài khung học 08:00-22:00.
 struct FixedEvent {
     std::string id;
     std::string title;
     TimeSlot time;
 };
 
-// Phiên học gắn với một Task.
+// Trạng thái của phiên học, độc lập với TaskStatus.
 enum class SessionStatus {
     Planned,
     Completed,
@@ -47,6 +44,10 @@ enum class SessionStatus {
 };
 
 struct StudySession {
+    // id không rỗng, duy nhất; taskId phải trỏ tới Task tồn tại.
+    // isLocked bảo vệ phiên khỏi thay đổi tự động; confirm không tự động khóa.
+    // Planned chiếm chỗ. Missed/Cancelled không chiếm chỗ cho lịch mới nhưng
+    // vẫn phải được giữ lại làm lịch sử.
     std::string id;
     TaskId taskId;
     TimeSlot time;
@@ -60,7 +61,11 @@ struct Schedule {
     std::vector<StudySession> studySessions;
 };
 
-// Kết quả lập lịch theo quy tắc trong tài liệu.
+// QUY ƯỚC BẮT BUỘC:
+// - Đây là kết quả proposal, chưa phải dữ liệu đã commit.
+// - Scheduled: xếp đủ; PartiallyScheduled: còn phần chưa xếp.
+// - Infeasible: không có phương án hợp lệ; NeedsConfirmation: cần làm rõ.
+// - Mọi proposal đều phải đi qua Preview -> Confirm -> Commit.
 enum class SchedulingStatus {
     Scheduled,
     PartiallyScheduled,
@@ -71,6 +76,7 @@ enum class SchedulingStatus {
 struct SchedulingResult {
     SchedulingStatus status = SchedulingStatus::Infeasible;
     Schedule proposedSchedule;
+    // Khi không xếp đủ phải nêu Task/phần thời lượng còn thiếu và nguyên nhân.
     std::vector<std::string> reasons;
 };
 
@@ -89,8 +95,8 @@ inline bool conflictsWithSession(
     const StudySession& first,
     const StudySession& second
 ) noexcept {
-    // Không xem chính phiên đó là xung đột.
-    if (first.id == second.id) {
+    // Chỉ bỏ qua chính phiên có ID hợp lệ. Validator vẫn phải phát hiện ID trùng.
+    if (!first.id.empty() && first.id == second.id) {
         return false;
     }
 
@@ -107,4 +113,4 @@ inline bool isValidDuration(int minutes) noexcept {
     return minutes > 0;
 }
 
-} // namespace edu
+} // namespace edu_schedule
