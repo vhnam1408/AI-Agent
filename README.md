@@ -1,110 +1,129 @@
-# 🎓 EduSchedule-Agent — TASK-01
+# EduSchedule-Agent
 
-> **Nhiệm vụ:** Khảo sát libcurl, nlohmann/json, Ollama `/api/chat`; thử request văn bản và kiểm tra khả năng vision  
-> **Deliverable:** Bản thử nghiệm API, ghi rõ model/tag và lệnh chạy  
-> **Sinh viên phụ trách:** Võ Hoàng Nam  
-> **Đồ án môn:** Lập trình Hướng đối tượng (OOP) — C++17/C++20  
+Phạm vi hiện tại là TASK-01 trong PROJECT PLAN: khảo sát libcurl, nlohmann/json,
+thử Ollama `/api/chat` với văn bản và ảnh, ghi rõ model/tag cùng lệnh chạy.
+Đề chính thức mục III.3.1 yêu cầu chung giao diện text/ảnh, xử lý lỗi và cấu hình client.
+Bản này giữ `LLMClient` trừu tượng và `OllamaClient` kế thừa như mục IV.
 
----
+TASK-01 chưa bao gồm bộ trích xuất deadline (TASK-17), xử lý ngày mơ hồ (TASK-21)
+hay hệ thống Agent hoàn chỉnh. Các module đã có vẫn được giữ trong dự án.
 
-## 📌 1. Giới thiệu TASK-01
+## Chuẩn bị và build
 
-TASK-01 tập trung nghiên cứu, khảo sát và xây dựng **tầng Client giao tiếp LLM (`LLMClient`)** kết nối với dịch vụ **Ollama** chạy cục bộ thông qua giao thức HTTP REST API `/api/chat`. 
+Cần CMake 3.20+, libcurl và compiler hỗ trợ C++23 theo cấu hình chung hiện có của dự án.
+Thư viện nlohmann/json đã có trong thư mục `include/`.
+Ollama và model chỉ cần khi chạy demo thật. SQLite là thư viện tùy chọn cho phần sau.
 
-Hệ thống được thiết kế hướng đối tượng theo chuẩn nguyên tắc SOLID:
-* **Single Responsibility**: `Base64` chỉ mã hóa ảnh, `LLMClient` định hình giao diện trừu tượng, `OllamaClient` phụ trách giao thức Ollama.
-* **Open/Closed**: Dễ dàng thêm `OpenAIClient`, `GeminiClient` bằng cách kế thừa `LLMClient` mà không cần sửa code kiểm thử.
-* **Liskov Substitution**: Bất kỳ subclass nào cũng thay thế được `LLMClient` mà không gây vỡ chương trình.
-* **Dependency Inversion**: Tầng ứng dụng chỉ phụ thuộc vào abstraction `LLMClient`, không phụ thuộc trực tiếp vào triển khai `OllamaClient`.
-* **RAII (Resource Acquisition Is Initialization)**: Tự động quản lý tài nguyên `CURL*` và `curl_slist*` thông qua `std::unique_ptr` kèm custom deleter, cam kết **không rò rỉ bộ nhớ (zero memory leaks)**.
+Chạy các lệnh sau tại thư mục dự án. Ví dụ trên Windows với MSYS2 UCRT64:
 
----
-
-## 📁 2. Cấu trúc thư mục TASK-01
-
-```
-AI-Agent/
-├── CMakeLists.txt              # Cấu hình biên dịch CMake C++17 (link libcurl)
-├── .gitignore                  # Loại trừ build/, file nhị phân *.exe, output/
-├── README.md                   # Báo cáo Deliverable: Ghi rõ model/tag và lệnh chạy
-│
-├── docs/
-│   └── technical_spike.md      # Báo cáo khảo sát kỹ thuật libcurl, nlohmann/json, Ollama
-│
-├── include/
-│   ├── client/
-│   │   ├── llm_client.h        # Interface trừu tượng LLMClient, ChatMessage, LLMResponse
-│   │   └── ollama_client.h     # OllamaClient & RAII wrappers cho libcurl
-│   └── nlohmann/
-│       └── json.hpp            # Thư viện JSON header-only (tích hợp sẵn, chạy offline)
-│
-├── src/
-│   ├── client/
-│   │   └── ollama_client.cpp   # Cài đặt Base64 (RFC 4648), HTTP POST libcurl, parse JSON
-│   └── main.cpp                # Bản thử nghiệm API: Chạy TC-01 (Text), TC-02 (Vision), TC-03 (Error)
-│
-└── assets/
-    ├── input.txt               # Văn bản deadline mẫu phục vụ TC-01
-    └── timetable.png           # Ảnh thời khóa biểu mẫu phục vụ TC-02 (Vision)
-```
-
----
-
-## 🤖 3. Thông tin Model / Tag đề xuất
-
-Hệ thống hỗ trợ các model Ollama sau (cần pull trước khi chạy):
-
-| Loại tác vụ | Model / Tag đề xuất | Dung lượng | Lệnh tải (Terminal) | Mô tả |
-| :--- | :--- | :--- | :--- | :--- |
-| **Multimodal Vision** *(Khuyên dùng)* | `qwen3-vl:7b` | ~5.0 GB | `ollama pull qwen3-vl:7b` | Nhận diện chữ tiếng Việt và tiếng Anh trong ảnh thời khóa biểu cực kỳ chính xác. |
-| **Multimodal Vision** *(Nhẹ / Nhanh)* | `moondream` | ~1.7 GB | `ollama pull moondream` | Model gọn nhẹ, tối ưu cho máy cấu hình RAM thấp (chuyên Tiếng Anh). |
-| **Text-only NLP** | `gemma3:12b` hoặc `qwen2.5:7b` | ~5-7 GB | `ollama pull gemma3:12b` | Trích xuất deadline và bóc tách thông tin từ văn bản tiếng Việt/Anh. |
-
-> **Khởi động server Ollama:**
-> ```bash
-> ollama serve
-> ```
-
----
-
-## 🚀 4. Hướng dẫn Build & Lệnh Chạy (Commands)
-
-### Bước 1: Biên dịch bằng CMake
-```bash
-# 1. Tạo thư mục build và cấu hình Makefile (MinGW hoặc MSVC)
-cmake -B build -G "MinGW Makefiles"
-
-# 2. Biên dịch target ai_agent
+```powershell
+cmake -S . -B build -G "MinGW Makefiles"
 cmake --build build
+ctest --test-dir build --output-on-failure
 ```
 
-Sau khi build thành công, file thực thi nằm tại: `build/ai_agent.exe`.
+Nếu dùng Linux với trình biên dịch phù hợp, bỏ `-G "MinGW Makefiles"`.
 
-### Bước 2: Các lệnh chạy thử nghiệm API
+## Chạy demo
 
-#### 1. Chạy với cấu hình mặc định (localhost:11434, model `qwen3-vl:7b`):
-```bash
-./build/ai_agent.exe
+Khởi động Ollama nếu server chưa chạy, sau đó xem danh sách model:
+
+```powershell
+ollama serve
+# Trong terminal khác:
+ollama list
 ```
 
-#### 2. Chỉ định Server URL và Model tùy chọn:
-```bash
-# Thử nghiệm với model moondream (ngôn ngữ Tiếng Anh):
-./build/ai_agent.exe http://localhost:11434 moondream en
+Danh sách trên máy khi kiểm tra ngày 20/10/2026 có `qwen2.5:0.5b` và
+`moondream:latest`. Có model trong danh sách chưa chứng minh model đã chạy thành công.
+Thử văn bản trước, rồi thử ảnh bằng model vision:
 
-# Thử nghiệm với server Ollama chạy qua Ngrok/Colab:
-./build/ai_agent.exe https://xxxx.ngrok-free.app qwen3-vl:7b vi
+```powershell
+.\build\ai_agent.exe --model qwen2.5:0.5b --text assets/chat_prompt.txt --temperature 0 --max-tokens 128 --output output/api_text.json
+.\build\ai_agent.exe --model moondream:latest --image assets/timetable.png --temperature 0 --max-tokens 256 --timeout-ms 120000 --output output/api_image.json
 ```
 
-#### 3. Chỉ định file văn bản hoặc file ảnh riêng từ dòng lệnh:
-```bash
-./build/ai_agent.exe http://localhost:11434 qwen3-vl:7b vi "assets/input.txt" "assets/timetable.png"
+Ảnh được gửi cùng câu hỏi tiếng Anh yêu cầu mô tả nội dung nhìn thấy.
+Dùng ảnh đơn giản, rõ nét trước khi đánh giá khả năng đọc thời khóa biểu tiếng Việt.
+Văn bản trong `--text` được dùng nguyên làm câu hỏi; bạn có thể tự sửa file mẫu.
+
+| Tùy chọn | Ý nghĩa | Mặc định |
+|---|---|---|
+| `--model` | Tên model và tag đúng như Ollama đã cài | Bắt buộc |
+| `--text` / `--image` | Chọn đúng một file đầu vào | Bắt buộc |
+| `--url` | Địa chỉ Ollama | `http://localhost:11434` |
+| `--temperature` | Mức ngẫu nhiên, demo cho phép 0–2 | 0.7 |
+| `--max-tokens` | Giới hạn token trả lời, gửi bằng `num_predict` | 2048 |
+| `--timeout-ms` | Thời gian tối đa chờ request, mili giây | 120000 |
+| `--insecure` | Bỏ qua kiểm tra chứng chỉ SSL (khi dùng tunnel/ngrok) | Tắt |
+| `--output` | File JSON ghi nhận lần thử | `output/result.json` |
+
+`--help` in cách chạy. Cú pháp tham số rời cũ đã được thay bằng các cờ trên.
+Nếu server dùng cổng khác hoặc chạy từ xa, truyền `--url` tương ứng.
+
+File đầu ra gồm `model_requested`, `model_used`, `input_type`, `success`, `content`,
+`latency_ms`, `truncated`. Đây là bản ghi do C++ tạo bằng nlohmann/json.
+`success` chỉ phản ánh gọi API và đọc phản hồi thành công, không đánh giá câu trả lời đúng.
+Nội dung AI trong `content` được giữ nguyên, có thể là văn bản thường.
+Nếu bị giới hạn token, chương trình lưu `truncated: true` và in cảnh báo.
+Nếu HTTP hoặc JSON API lỗi, chương trình báo lỗi và không ghi đè kết quả cũ.
+Không xuất thống kê token trong bản ghi này để tránh nhầm số 0 với dữ liệu API bị thiếu.
+
+## Đọc code theo thứ tự này
+
+1. `src/main.cpp`: xem bốn bước trong `main()` trước. Đây là luồng sử dụng chương trình.
+2. `include/client/llm_client.h`: xem các struct dữ liệu và giao diện `LLMClient`.
+3. `include/client/ollama_client.h`: xem lớp `OllamaClient` và các hàm nó cung cấp.
+4. `src/client/ollama_client.cpp`: đọc `chat()`, sau đó lần lượt đọc
+   `build_payload()`, `http_post()` và `parse_ollama_response()`.
+5. Cuối cùng mới đọc hàm Base64 và các hàm hỗ trợ quản lý tài nguyên curl.
+
+Luồng xử lý:
+
+```text
+File văn bản / ảnh
+    -> ChatMessage (ảnh được mã hóa Base64)
+    -> OllamaClient::chat()
+    -> build_payload(): tạo JSON gửi đi
+    -> http_post(): gửi POST đến /api/chat
+    -> parse_ollama_response(): đọc message.content và thông tin lỗi
+    -> main(): in câu trả lời, tạo bản ghi JSON và lưu file
 ```
 
----
+Phân biệt hai việc: Ollama trả một JSON chứa `message.content`; bên trong `content`
+là câu trả lời dạng chuỗi. Ở TASK-01, không bắt chuỗi đó phải là JSON hay có schema deadline.
 
-## 🧪 5. Kết quả các kịch bản kiểm thử (Test Cases)
+## Những khái niệm cần hiểu
 
-* **[TC-01] Text-only Deadline Extraction**: Đọc file `assets/input.txt`, gửi request NLP tới Ollama, trích xuất danh sách deadline thành mảng JSON chuẩn gồm 3 thuộc tính: `task`, `deadline`, `subject`. Mảng JSON được in ra Terminal và tự động lưu vào `output/deadlines_output.json`.
-* **[TC-02] Multimodal Vision**: Đọc file ảnh nhị phân `assets/timetable.png`, mã hóa Base64 không qua file trung gian, gửi đến model Vision, bóc tách toàn bộ lịch học thành mảng JSON chuẩn (chuẩn hóa `task`, `deadline`, `subject`). Tự động lưu vào `output/schedule_output.json`.
-* **[TC-03] Fault Tolerance & Error Handling**: Thử nghiệm kết nối sai cổng (`localhost:19999`), timeout cực ngắn (1ms), và parse JSON lỗi. Hệ thống bắt lỗi mượt mà (`LLMResponse.success == false`, `error_type`), chứng minh **không có exception nào làm crash chương trình**.
+| Thành phần | Cách hiểu |
+|---|---|
+| `LLMConfig` | Các tùy chọn kết nối: địa chỉ, model, timeout, số token tối đa. |
+| `ChatMessage` | Một tin nhắn gửi AI: vai trò, nội dung và ảnh nếu có. |
+| `LLMResponse` | Kết quả gọi API: thành công hay lỗi, nội dung, token và thời gian. |
+| `LLMClient` | Lớp giao diện, quy định client phải có hàm `chat()`. |
+| `OllamaClient` | Lớp con thực hiện việc gọi Ollama cụ thể. |
+| `virtual` / `override` | Cho phép lớp con cung cấp cách thực hiện hàm của lớp cha. |
+| `optional` | Giá trị có thể không có; chẳng hạn không đọc được ảnh. |
+| `unique_ptr` | Con trỏ sở hữu tài nguyên, tự giải phóng khi hết thời gian sống. |
+| `CurlGlobalGuard` | Khởi tạo curl khi tạo đối tượng, dọn curl khi đối tượng bị hủy. |
+| `write_callback()` | Hàm curl gọi nhiều lần để nối các phần dữ liệu nhận được. |
+| Base64 | Đổi byte ảnh thành ký tự để đưa vào JSON; không phải mã hóa bảo mật. |
+| `try` / `catch` | Bắt lỗi và in thông báo thay vì kết thúc chương trình đột ngột. |
+
+Các API dùng cho Agent được giữ để những phần sau tiếp tục hoạt động.
+Trong demo, `main()` tạo trực tiếp `OllamaClient`; chưa cần học factory để theo dõi luồng này.
+Các trường token và thời gian dành cho phần đánh giá về sau.
+
+## Kiểm thử
+
+- `ollama_client_smoke_test.cpp`: kiểm tra đầu vào rỗng, mã hóa Base64, ảnh không tồn tại.
+- `ollama_http_test.py`: dựng server HTTP cục bộ để kiểm tra payload văn bản/ảnh,
+  lỗi HTTP, JSON sai, timeout và việc lưu kết quả của CLI. Không tải hay chạy model.
+
+Nếu CMake tìm thấy Python 3 thì CTest có thêm test `ollama_http`.
+Python chỉ dùng cho kiểm thử; ứng dụng chính vẫn viết bằng C++.
+Test với server giả lập chứng minh luồng kỹ thuật, không chứng minh độ chính xác đọc ảnh
+hoặc trích xuất deadline của một model thật. Khi báo cáo, ghi rõ tên model/tag, đầu vào
+và kết quả của lần chạy Ollama thực tế.
+
+`docs/technical_spike.md` giải thích HTTP/JSON/Base64 và cách nghiệm thu TASK-01.

@@ -87,3 +87,22 @@ add_custom_command(TARGET ai_agent POST_BUILD
     ${CMAKE_BINARY_DIR}/edu_schedule_poc.exe
     COMMENT "Generating edu_schedule_poc.exe alias"
 )
+
+# Kiểm thử Client TASK-01; giữ nguyên cấu hình build của các task đã có.
+include(CTest)
+if(BUILD_TESTING)
+    add_executable(ollama_client_smoke_test
+        tests/ollama_client_smoke_test.cpp
+        src/client/ollama_client.cpp
+    )
+    target_link_libraries(ollama_client_smoke_test PRIVATE CURL::libcurl)
+    add_test(NAME ollama_client COMMAND ollama_client_smoke_test)
+
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME ollama_http
+            COMMAND ${Python3_EXECUTABLE}
+                ${CMAKE_CURRENT_SOURCE_DIR}/tests/ollama_http_test.py
+                $<TARGET_FILE:ai_agent> $<TARGET_FILE:ollama_client_smoke_test>)
+    endif()
+endif()
