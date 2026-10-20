@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "../agent/Tool.h"
@@ -16,10 +15,13 @@ public:
     TaskLookupTool(Task&&) = delete;
     TaskLookupTool(const Task&&) = delete;
 
+    [[nodiscard]]
     std::string_view name() const noexcept override;
 
+    [[nodiscard]]
     std::string_view description() const noexcept override;
 
+    [[nodiscard]]
     ToolResult execute(std::string_view input) override;
 
 private:

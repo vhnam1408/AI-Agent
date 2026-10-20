@@ -1,18 +1,3 @@
-/**
- * @file ollama_client.cpp
- * @brief Triển khai đầy đủ OllamaClient cho Ollama REST API.
- *
- * Bao gồm:
- *  - Base64 encoder (RFC 4648, không phụ thuộc thư viện ngoài)
- *  - LLMClient::load_image_as_base64() và load_images_as_base64()
- *  - create_llm_client() factory function
- *  - OllamaClient: build_payload, http_post (RAII libcurl), parse_ollama_response
- *
- * @author  Võ Hoàng Nam
- * @project EduSchedule-Agent
- * @std     C++20
- */
-
 #include "client/ollama_client.h"
 
 #include <cctype>
@@ -24,25 +9,12 @@
 
 namespace edu_schedule {
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 1.  Base64 Encoder (RFC 4648 — Internal Implementation)
-// ══════════════════════════════════════════════════════════════════════════════
-
 namespace {
 
-/**
- * @brief Mã hóa dải byte sang chuỗi Base64 chuẩn RFC 4648.
- *
- * Thuật toán:
- *  - Xử lý 3 byte input → 4 ký tự Base64 output.
- *  - Padding '=' khi số byte không chia hết cho 3.
- *
- * @param data  Con trỏ đến dữ liệu nhị phân.
- * @param len   Số byte cần mã hóa.
- * @return      Chuỗi Base64 (chỉ chứa ký tự [A-Za-z0-9+/=]).
- */
-[[nodiscard]] std::string base64_encode(const uint8_t* data, std::size_t len)
+// Base64 đổi mỗi nhóm 3 byte thành 4 ký tự để gửi ảnh bên trong JSON.
+std::string base64_encode(const std::vector<uint8_t>& data)
 {
+    const std::size_t len = data.size();
     static constexpr std::string_view kAlphabet =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -62,22 +34,11 @@ namespace {
     return out;
 }
 
-/// Overload tiện lợi nhận vector<uint8_t>
-[[nodiscard]] std::string base64_encode(const std::vector<uint8_t>& data)
-{
-    return base64_encode(data.data(), data.size());
-}
-
 } // anonymous namespace
-
-// ══════════════════════════════════════════════════════════════════════════════
-// § 2.  LLMClient Static Utilities
-// ══════════════════════════════════════════════════════════════════════════════
 
 std::optional<std::string>
 LLMClient::load_image_as_base64(const std::filesystem::path& path)
 {
-    // ── Validate extension (case-insensitive) ─────────────────────────────────
     std::string ext = path.extension().string();
     for (char& c : ext) {
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
@@ -86,21 +47,16 @@ LLMClient::load_image_as_base64(const std::filesystem::path& path)
         return std::nullopt; // Định dạng không được hỗ trợ
     }
 
-    // ── Kiểm tra tồn tại ──────────────────────────────────────────────────────
-    if (!std::filesystem::exists(path)) {
-        return std::nullopt;
-    }
-
-    // ── Đọc file nhị phân (binary, ate để lấy size ngay) ─────────────────────
     std::ifstream ifs(path, std::ios::binary | std::ios::ate);
     if (!ifs.is_open()) {
         return std::nullopt;
     }
 
-    const auto file_size = static_cast<std::size_t>(ifs.tellg());
-    if (file_size == 0) {
+    const auto length = ifs.tellg();
+    if (length <= 0) {
         return std::nullopt;
     }
+    const auto file_size = static_cast<std::size_t>(length);
 
     ifs.seekg(0, std::ios::beg);
     std::vector<uint8_t> buffer(file_size);
@@ -132,10 +88,6 @@ LLMClient::load_images_as_base64(const std::vector<std::filesystem::path>& paths
     return { std::move(successes), std::move(failures) };
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 3.  OllamaClient — Constructor
-// ══════════════════════════════════════════════════════════════════════════════
-
 OllamaClient::OllamaClient()
     : OllamaClient(LLMConfig{}) // Delegate đến constructor có config
 {}
@@ -151,10 +103,6 @@ OllamaClient::OllamaClient(LLMConfig config)
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 4.  Configuration
-// ══════════════════════════════════════════════════════════════════════════════
-
 void OllamaClient::set_config(const LLMConfig& config)
 {
     m_config = config;
@@ -165,10 +113,6 @@ const LLMConfig& OllamaClient::get_config() const noexcept
     return m_config;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 5.  chat() — Entry Point
-// ══════════════════════════════════════════════════════════════════════════════
-
 LLMResponse OllamaClient::chat(const std::vector<ChatMessage>& messages)
 {
     if (messages.empty()) {
@@ -176,28 +120,31 @@ LLMResponse OllamaClient::chat(const std::vector<ChatMessage>& messages)
                           "messages vector is empty — không có gì để gửi.");
     }
 
-    // ── Xây dựng payload ─────────────────────────────────────────────────────
-    const nlohmann::json payload = build_payload(messages);
-    const std::string    url     = m_config.base_url + "/api/chat";
-    const std::string    body    = payload.dump(); // compact JSON string
+    // Ba việc chính: tạo JSON, gửi HTTP, đọc JSON trả về.
+    try {
+        const nlohmann::json payload = build_payload(messages);
 
-    // ── Đo latency bằng steady_clock (không bị ảnh hưởng bởi NTP/DST) ────────
-    const auto t_start = std::chrono::steady_clock::now();
+        // Chuẩn hóa base_url (bỏ dấu gạch chéo cuối nếu có, không lặp lại /api/chat)
+        std::string base = m_config.base_url;
+        while (!base.empty() && base.back() == '/') {
+            base.pop_back();
+        }
+        const std::string url = base.ends_with("/api/chat") ? base : (base + "/api/chat");
+        const std::string    body    = payload.dump(); // compact JSON string
 
-    // ── Thực hiện HTTP POST ───────────────────────────────────────────────────
-    HttpResult result = http_post(url, body);
+        const auto t_start = std::chrono::steady_clock::now();
 
-    const auto t_end     = std::chrono::steady_clock::now();
-    const long long latency_ms =
-        std::chrono::duration_cast<std::chrono::milliseconds>(t_end - t_start).count();
+        HttpResult result = http_post(url, body);
 
-    // ── Parse và trả về ───────────────────────────────────────────────────────
-    return parse_ollama_response(result, latency_ms);
+        const auto t_end     = std::chrono::steady_clock::now();
+        const long long latency_ms =
+            std::chrono::duration_cast<std::chrono::milliseconds>(t_end - t_start).count();
+
+        return parse_ollama_response(result, latency_ms);
+    } catch (const nlohmann::json::exception& error) {
+        return make_error(LLMErrorType::MalformedJson, error.what());
+    }
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// § 6.  build_payload() — JSON Serialization
-// ══════════════════════════════════════════════════════════════════════════════
 
 nlohmann::json OllamaClient::build_payload(
     const std::vector<ChatMessage>& messages) const
@@ -236,15 +183,6 @@ nlohmann::json OllamaClient::build_payload(
     return j;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 7.  http_post() — libcurl HTTP POST với RAII hoàn toàn
-// ══════════════════════════════════════════════════════════════════════════════
-
-/**
- * @brief libcurl write callback.
- * Được gọi bởi curl mỗi khi nhận được một chunk dữ liệu.
- * Tích lũy vào std::string được truyền qua userdata.
- */
 size_t OllamaClient::write_callback(
     char*   ptr,
     size_t  size,
@@ -253,21 +191,27 @@ size_t OllamaClient::write_callback(
 {
     const size_t total = size * nmemb;
     auto* buf = static_cast<std::string*>(userdata);
-    buf->append(ptr, total);
+    // Không để exception đi qua callback của thư viện C.
+    try {
+        buf->append(ptr, total);
+    } catch (...) {
+        return 0; // curl sẽ báo lỗi ghi dữ liệu.
+    }
     return total; // Phải trả về đúng số bytes, khác → curl báo CURLE_WRITE_ERROR
 }
 
-/**
- * @brief Xây dựng CurlSlist cho HTTP headers.
- */
 CurlSlist OllamaClient::build_headers() const
 {
-    curl_slist* raw = nullptr;
-    raw = curl_slist_append(raw, "Content-Type: application/json");
-    raw = curl_slist_append(raw, "Accept: application/json");
-
-    // Wrap ngay vào RAII — nếu append fail và raw = null, unique_ptr null cũng OK
-    return CurlSlist(raw);
+    CurlSlist headers;
+    for (const char* text : {"Content-Type: application/json", "Accept: application/json",
+                             "ngrok-skip-browser-warning: 1", "User-Agent: EduSchedule-Agent/1.0"}) {
+        // append trả về đầu danh sách. Giữ danh sách cũ nếu cấp phát thất bại.
+        curl_slist* updated = curl_slist_append(headers.get(), text);
+        if (!updated) throw std::runtime_error("Khong tao duoc HTTP header.");
+        headers.release();
+        headers.reset(updated);
+    }
+    return headers;
 }
 
 OllamaClient::HttpResult
@@ -281,8 +225,6 @@ OllamaClient::http_post(const std::string& url, const std::string& json_body)
 
     // Reset tất cả option từ lần gọi trước (tái sử dụng handle)
     curl_easy_reset(curl);
-
-    // ── Cấu hình curl options ─────────────────────────────────────────────────
 
     // URL và method
     curl_easy_setopt(curl, CURLOPT_URL,  url.c_str());
@@ -314,7 +256,6 @@ OllamaClient::http_post(const std::string& url, const std::string& json_body)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &OllamaClient::write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,     &response_buffer);
 
-    // ── Thực hiện request ─────────────────────────────────────────────────────
     result.curl_code = curl_easy_perform(curl);
     result.body      = std::move(response_buffer);
 
@@ -327,15 +268,10 @@ OllamaClient::http_post(const std::string& url, const std::string& json_body)
     return result;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// § 8.  parse_ollama_response() — JSON Deserialization
-// ══════════════════════════════════════════════════════════════════════════════
-
 LLMResponse OllamaClient::parse_ollama_response(
     const HttpResult& result,
     long long         latency_ms) const
 {
-    // ── Case 1: libcurl lỗi cấp thấp (không kết nối được) ────────────────────
     if (result.curl_code != CURLE_OK) {
         const LLMErrorType err_type = map_curl_error(result.curl_code);
         const std::string  err_msg  =
@@ -343,11 +279,10 @@ LLMResponse OllamaClient::parse_ollama_response(
         return make_error(err_type, err_msg, 0, latency_ms);
     }
 
-    // ── Case 2: HTTP error (4xx / 5xx) ────────────────────────────────────────
     if (result.status_code != 200) {
         std::string err_detail;
         const auto err_json = nlohmann::json::parse(result.body, nullptr, false);
-        if (!err_json.is_discarded() && err_json.contains("error")) {
+        if (err_json.is_object() && err_json.contains("error") && err_json["error"].is_string()) {
             err_detail = err_json["error"].get<std::string>();
         } else {
             err_detail = result.body.substr(0, 512);
@@ -360,10 +295,8 @@ LLMResponse OllamaClient::parse_ollama_response(
                           static_cast<int>(result.status_code), latency_ms);
     }
 
-    // ── Case 3: Parse JSON response ───────────────────────────────────────────
-
     // Dùng allow_exceptions=false → không throw, kiểm tra is_discarded()
-    const auto j = nlohmann::json::parse(result.body, nullptr, /*allow_exceptions=*/false);
+    const auto j = nlohmann::json::parse(result.body, nullptr, false);
 
     if (j.is_discarded()) {
         const std::string preview = result.body.substr(0, 256);
@@ -372,28 +305,28 @@ LLMResponse OllamaClient::parse_ollama_response(
                           static_cast<int>(result.status_code), latency_ms);
     }
 
-    // ── Bóc tách các trường cần thiết với .value() để tránh throw ────────────
-    LLMResponse resp;
-    resp.latency_ms   = latency_ms;
-    resp.http_status  = static_cast<int>(result.status_code);
-    resp.model_used   = j.value("model", m_config.model_name);
-
-    // Token counts (Harness metrics)
-    resp.prompt_tokens     = j.value("prompt_eval_count", 0);
-    resp.completion_tokens = j.value("eval_count",        0);
-    resp.total_tokens      = resp.prompt_tokens + resp.completion_tokens;
-
-    // Thời gian từ Ollama (nanoseconds → milliseconds)
-    const int64_t total_ns        = j.value("total_duration", int64_t{0});
-    resp.ollama_total_duration_ms = total_ns / 1'000'000;
-
-    // Kiểm tra truncation
-    resp.truncated = (j.value("done_reason", std::string("stop")) == "length");
-
-    // Nội dung chính (message.content) — dùng try-catch vì nested access
+    // .value() cũng có thể báo lỗi nếu trường tồn tại nhưng sai kiểu.
     try {
+        LLMResponse resp;
+        resp.latency_ms   = latency_ms;
+        resp.http_status  = static_cast<int>(result.status_code);
+        resp.model_used   = j.value("model", m_config.model_name);
+
+        // Token counts (Harness metrics)
+        resp.prompt_tokens     = j.value("prompt_eval_count", 0);
+        resp.completion_tokens = j.value("eval_count",        0);
+        resp.total_tokens      = resp.prompt_tokens + resp.completion_tokens;
+
+        // Thời gian từ Ollama (nanoseconds → milliseconds)
+        const int64_t total_ns        = j.value("total_duration", int64_t{0});
+        resp.ollama_total_duration_ms = total_ns / 1'000'000;
+
+        // Kiểm tra truncation
+        resp.truncated = (j.value("done_reason", std::string("stop")) == "length");
+
         resp.content = j.at("message").at("content").get<std::string>();
         resp.success = true;
+        return resp;
     } catch (const nlohmann::json::exception& e) {
         // JSON hợp lệ nhưng schema không đúng — trường hợp Ollama version cũ
         return make_error(
@@ -403,12 +336,7 @@ LLMResponse OllamaClient::parse_ollama_response(
             static_cast<int>(result.status_code), latency_ms);
     }
 
-    return resp;
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// § 9.  Error Mapping
-// ══════════════════════════════════════════════════════════════════════════════
 
 LLMErrorType OllamaClient::map_curl_error(CURLcode code) noexcept
 {
@@ -420,10 +348,6 @@ LLMErrorType OllamaClient::map_curl_error(CURLcode code) noexcept
         default:                         return LLMErrorType::ConnectionRefused;
     }
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// § 10. Factory Function
-// ══════════════════════════════════════════════════════════════════════════════
 
 std::unique_ptr<LLMClient>
 create_llm_client(std::string_view backend, const LLMConfig& config)

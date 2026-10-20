@@ -1,23 +1,16 @@
-
 #pragma once
 
 #include "Tool.h"
 
-#include <cstddef>
-#include <exception>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 
 namespace edu_schedule {
-
-enum class ToolAccess {
-    Denied,
-    Allowed
-};
 
 // QUY ƯỚC BẮT BUỘC:
 // - Registry sở hữu Tool bằng unique_ptr; findTool() trả con trỏ mượn.
@@ -29,100 +22,76 @@ enum class ToolAccess {
 class ToolRegistry {
 public:
     template <ToolType T>
-    void registerTool(
-        std::unique_ptr<T> tool,
-        ToolAccess access = ToolAccess::Denied
-    ) {
+    void registerTool(std::unique_ptr<T> tool) {
         if (!tool) {
             throw std::invalid_argument("Tool cannot be null");
         }
 
-        std::string key(tool->name());
-
+        const std::string key(tool->name());
         if (key.empty()) {
-            throw std::invalid_argument(
-                "Tool name cannot be empty"
-            );
+            throw std::invalid_argument("Tool name cannot be empty");
         }
-
         if (tools_.contains(key)) {
-            throw std::runtime_error(
-                "Duplicate tool: " + key
-            );
+            throw std::runtime_error("Duplicate tool: " + key);
         }
 
-        tools_.emplace(std::move(key), Entry{std::move(tool), access});
+        std::unique_ptr<ITool> baseTool(std::move(tool));
+        tools_.emplace(key, std::move(baseTool));
     }
 
+    // Mutable lookup for a non-const registry.
     [[nodiscard]]
     ITool* findTool(std::string_view name) {
-        auto it = tools_.find(std::string(name));
-
-        if (it == tools_.end()) {
-            return nullptr;
-        }
-
-        return it->second.tool.get();
+        const auto it = tools_.find(std::string(name));
+        return it == tools_.end() ? nullptr : it->second.get();
     }
 
+    // Const lookup does not expose a mutable ITool pointer.
     [[nodiscard]]
     const ITool* findTool(std::string_view name) const {
-        auto it = tools_.find(std::string(name));
-        return it == tools_.end() ? nullptr : it->second.tool.get();
+        const auto it = tools_.find(std::string(name));
+        return it == tools_.end() ? nullptr : it->second.get();
     }
 
-    // Trả false nếu Tool chưa đăng ký; không tự tạo Tool mới.
-    [[nodiscard]]
-    bool setToolAccess(std::string_view name, ToolAccess access) {
-        auto it = tools_.find(std::string(name));
-        if (it == tools_.end()) {
-            return false;
-        }
-        it->second.access = access;
-        return true;
+    // If the allow-list is empty, all registered tools are allowed unless denied.
+    // If the allow-list is non-empty, only explicitly allowed tools may run.
+    void allowTool(std::string_view name) {
+        allowedTools_.emplace(name);
+        deniedTools_.erase(std::string(name));
+    }
+
+    void denyTool(std::string_view name) {
+        deniedTools_.emplace(name);
+        allowedTools_.erase(std::string(name));
+    }
+
+    void clearToolPolicy() noexcept {
+        allowedTools_.clear();
+        deniedTools_.clear();
     }
 
     [[nodiscard]]
     bool isToolAllowed(std::string_view name) const {
-        auto it = tools_.find(std::string(name));
-        return it != tools_.end() && it->second.access == ToolAccess::Allowed;
+        const std::string key(name);
+        if (deniedTools_.contains(key)) {
+            return false;
+        }
+        if (!allowedTools_.empty() && !allowedTools_.contains(key)) {
+            return false;
+        }
+        return tools_.contains(key);
     }
 
     [[nodiscard]]
-    ToolResult execute(
-        std::string_view name,
-        std::string_view input
-    ) {
+    ToolResult execute(std::string_view name, std::string_view input) {
         ITool* tool = findTool(name);
-
         if (tool == nullptr) {
-            return {
-                false,
-                "Tool not found: " + std::string(name)
-            };
+            return {false, "Tool not found: " + std::string(name)};
         }
-
         if (!isToolAllowed(name)) {
-            return {
-                false,
-                "Tool denied: " + std::string(name)
-            };
+            return {false, "Tool execution denied by policy: " + std::string(name)};
         }
-
-        // Không để một Tool lỗi làm sập AgentLoop.
-        try {
-            return tool->execute(input);
-        } catch (const std::exception& error) {
-            return {
-                false,
-                "Tool failed: " + std::string(error.what())
-            };
-        } catch (...) {
-            return {
-                false,
-                "Tool failed: unknown exception"
-            };
-        }
+        return tool->execute(input);
     }
 
     [[nodiscard]]
@@ -131,12 +100,9 @@ public:
     }
 
 private:
-    struct Entry {
-        std::unique_ptr<ITool> tool;
-        ToolAccess access;
-    };
-
-    std::unordered_map<std::string, Entry> tools_;
+    std::unordered_map<std::string, std::unique_ptr<ITool>> tools_;
+    std::unordered_set<std::string> allowedTools_;
+    std::unordered_set<std::string> deniedTools_;
 };
 
 } // namespace edu_schedule
