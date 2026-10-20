@@ -5,9 +5,15 @@
 
 namespace edu_schedule {
 
+// QUY ƯỚC BẮT BUỘC:
+// - Tool mẫu chỉ tra một Task được truyền vào constructor.
+// - Task được mượn và phải sống lâu hơn Tool; không nhận Task tạm.
+// - input là TaskId thuần (ví dụ "T1"), chưa phải JSON; Tool chỉ đọc dữ liệu.
 class TaskLookupTool final : public ITool {
 public:
     explicit TaskLookupTool(const Task& task);
+    TaskLookupTool(Task&&) = delete;
+    TaskLookupTool(const Task&&) = delete;
 
     [[nodiscard]]
     std::string_view name() const noexcept override;

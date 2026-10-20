@@ -1,18 +1,25 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
-#include <chrono>
 
+#include "domain_types.h"
+#include "priority.h"
 #include "TaskStatus.h"
-#include "Priority.h"
 
-using TimePoint = std::chrono::system_clock::time_point;
+namespace edu_schedule {
 
+// QUY ƯỚC BẮT BUỘC:
+// - id không rỗng và duy nhất trong tập Task.
+// - deadline là một mốc, không chiếm lịch và không tự sinh StudySession.
+// - estimatedMinutes == 0 nghĩa là chưa biết; phải làm rõ trước khi xếp lịch.
+// - Nếu đã biết thời lượng: 0 <= remainingMinutes <= estimatedMinutes.
+// - dependencies chứa TaskId, chỉ tạo khi có căn cứ; không suy đoán từ câu nói.
+// - courseId có thể rỗng; nếu có phải tham chiếu Course::id hợp lệ.
 struct Task {
-    std::string id;
+    TaskId id;
     std::string title;
     std::string courseId;
 
@@ -24,5 +31,15 @@ struct Task {
     Priority priority = Priority::Mid;
     TaskStatus status = TaskStatus::Todo;
 
-    std::vector<std::string> dependencies;
+    std::vector<TaskId> dependencies;
+
+    [[nodiscard]]
+    bool isOverdue(TimePoint now) const noexcept {
+        return deadline.has_value()
+            && now > *deadline
+            && status != TaskStatus::Done
+            && status != TaskStatus::Cancelled;
+    }
 };
+
+} // namespace edu_schedule

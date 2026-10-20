@@ -12,6 +12,13 @@
 
 namespace edu_schedule {
 
+// QUY ƯỚC BẮT BUỘC:
+// - Registry sở hữu Tool bằng unique_ptr; findTool() trả con trỏ mượn.
+// - Tool mới mặc định Denied; cấu hình tin cậy phải cho phép tường minh.
+// - Agent phải gọi execute() qua Registry để kiểm tra quyền ở mỗi lần gọi.
+// - findTool() chỉ tra cứu, không kiểm tra quyền và không dùng để bỏ qua execute().
+// - Allow/deny không thay thế xác nhận của người dùng khi ghi dữ liệu.
+// - Phiên bản MVP dùng Registry trên một luồng; chưa cam kết thread-safe.
 class ToolRegistry {
 public:
     template <ToolType T>
