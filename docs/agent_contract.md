@@ -1,8 +1,5 @@
 # Khung LLM và Agent — hướng dẫn TASK-05
 
-Bản Word giải thích định nghĩa, chữ ký và vai trò từng hàm:
-[Huong_dan_TASK_05.docx](Huong_dan_TASK_05.docx).
-
 ## 1. Nhiệm vụ và phạm vi
 
 TASK-05 thiết lập CMake và thiết kế giao diện `llm_client.h`, `agent_loop.h`,
