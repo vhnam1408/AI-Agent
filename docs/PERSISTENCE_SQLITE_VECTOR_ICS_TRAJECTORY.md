@@ -368,30 +368,19 @@ Ký tự `Z` chỉ UTC. `20261025T080000Z` có nghĩa 08:00 UTC, tức 15:00 t�
 
 UID giúp nhận diện một sự kiện, nhưng không có nghĩa mọi thao tác nhập file vào mọi phần mềm lịch chắc chắn tự loại bỏ bản sao. Cách cập nhật/nhập trùng là hành vi của hệ thống nhận và luồng đồng bộ.
 
-## 16. Checklist kiểm thử file lịch
-
-- [ ] Có `BEGIN:VCALENDAR`, `VERSION:2.0`, `PRODID`, `END:VCALENDAR`.
-- [ ] Mỗi `VEVENT` đóng/mở đúng cặp.
-- [ ] Mỗi event có `UID`, `DTSTAMP` và các thuộc tính thời gian phù hợp.
-- [ ] `DTSTART` và `DTEND` biểu diễn đúng thời gian dự kiến, kể cả chuyển đổi múi giờ.
-- [ ] File thực tế dùng `CRLF`, xử lý line folding và escape theo RFC.
-- [ ] Mô tả có tiếng Việt, dấu phẩy, dấu chấm phẩy và newline vẫn đọc đúng.
-- [ ] File được thử nhập vào ít nhất một ứng dụng lịch tương thích mà nhóm chọn.
-- [ ] Xuất lại cùng một event giữ UID ổn định khi đó là yêu cầu thiết kế.
-
 ---
 
 # PHẦN D — TRAJECTORY JSON
 
-## 17. Mục đích
+## 16. Mục đích
 
 Trajectory JSON là nhật ký có cấu trúc về một lần chạy agent: tác vụ nào được chạy, công cụ nào được gọi, tham số truyền vào, kết quả, lỗi và thời gian xử lý. Nó giúp debug, đo hiệu năng, kiểm tra quy trình và đánh giá thành công/thất bại.
 
 **Lưu ý quan trọng:** “Trajectory JSON” không tự nó chỉ định một schema duy nhất cho mọi agent. Schema bên dưới là **đề xuất nội bộ cho EduSchedule-Agent**, trừ khi trưởng nhóm đã cung cấp một schema chuẩn khác. Nếu nhóm dùng định dạng đã có thì phải theo đúng tài liệu định dạng đó.
 
-## 18. Schema đề xuất
+## 17. Schema đề xuất
 
-### 18.1. Các trường cấp lần chạy
+### 17.1. Các trường cấp lần chạy
 
 | Trường | Kiểu | Ý nghĩa |
 |---|---|---|
@@ -406,7 +395,7 @@ Trajectory JSON là nhật ký có cấu trúc về một lần chạy agent: t�
 | `final_output` | object hoặc null | Kết quả cuối cùng đã chuẩn hóa |
 | `steps` | array | Các bước hành động/công cụ trong lượt chạy |
 
-### 18.2. Các trường cấp bước
+### 17.2. Các trường cấp bước
 
 | Trường | Kiểu | Ý nghĩa |
 |---|---|---|
@@ -422,7 +411,7 @@ Trajectory JSON là nhật ký có cấu trúc về một lần chạy agent: t�
 
 `total_time_ms` nên đo từ lúc bắt đầu đến lúc kết thúc cả lượt chạy, còn `latency_ms` đo thời gian của từng hành động/công cụ theo định nghĩa đã thống nhất. Không bắt buộc tổng latency các công cụ bằng tổng thời gian toàn lượt, vì giữa các công cụ có thể còn xử lý điều phối hoặc các bước khác.
 
-## 19. Ví dụ Trajectory JSON hợp lệ
+## 18. Ví dụ Trajectory JSON hợp lệ
 
 ```json
 {
@@ -489,7 +478,7 @@ Trajectory JSON là nhật ký có cấu trúc về một lần chạy agent: t�
 
 Tên model trong ví dụ chỉ là giá trị minh họa; phải thay bằng tên/tag thực tế của model khi chạy. Mỗi lần chạy nên tạo `run_id` riêng. Mã ví dụ trên biểu diễn một lần chạy thành công; nhóm cần kiểm thử cả trường hợp lỗi và timeout.
 
-## 20. Quy tắc ghi log và bảo vệ dữ liệu
+## 19. Quy tắc ghi log và bảo vệ dữ liệu
 
 1. Dùng JSON parser/serializer thay vì tự nối chuỗi để tạo JSON, đặc biệt với nội dung có dấu nháy hoặc xuống dòng.
 2. `action.args` phải là object hoặc kiểu dữ liệu được schema quy định; tránh chuyển mọi tham số thành chuỗi không có cấu trúc.
@@ -499,23 +488,9 @@ Tên model trong ví dụ chỉ là giá trị minh họa; phải thay bằng t�
 6. Khi schema thay đổi, tăng `schema_version` và giữ khả năng phân biệt log cũ với log mới.
 7. Xác định chính sách lưu giữ log, vì trajectory có thể chứa nội dung do người dùng cung cấp.
 
-## 21. Checklist kiểm thử Trajectory JSON
+# PHẦN PHỤ
 
-- [ ] File parse được bằng JSON parser chuẩn.
-- [ ] Có `schema_version`, `run_id`, thời điểm bắt đầu/kết thúc và trạng thái cuối cùng.
-- [ ] `step_id` có thứ tự ổn định.
-- [ ] `action.args` đúng kiểu và phản ánh tham số thực tế.
-- [ ] Bước lỗi có `tool_result.status = "error"` cùng thông tin lỗi có cấu trúc.
-- [ ] Đơn vị `latency_ms` và `total_time_ms` luôn là millisecond.
-- [ ] Timestamp dùng UTC ISO 8601 theo cùng một quy ước.
-- [ ] Không có secret hoặc dữ liệu nhạy cảm không cần thiết trong log.
-- [ ] Có ít nhất một test thành công, một test lỗi và một test timeout.
-
----
-
-# PHẦN E — HỢP ĐỒNG TÍCH HỢP GIỮA CÁC MODULE
-
-## 22. Các quy ước cần thống nhất trong nhóm
+## 20. Các quy ước cần thống nhất trong nhóm
 
 | Hạng mục | Quy ước đề xuất | Cần trưởng nhóm xác nhận? |
 |---|---|---|
@@ -528,27 +503,3 @@ Tên model trong ví dụ chỉ là giá trị minh họa; phải thay bằng t�
 | `.ics` | RFC 5545; UID ổn định; thời gian được chuyển đổi đúng | Có |
 | Trajectory JSON | Schema versioned của dự án hoặc schema bên ngoài được chỉ định | Có |
 | Error handling | Lỗi có mã/trạng thái và có log; không giả định thành công | Có |
-
-## 23. Checklist nghiệm thu tổng hợp
-
-### SQLite và vector
-- [ ] Database được tạo từ database rỗng bằng script khởi tạo.
-- [ ] Khóa ngoại hoạt động trên từng connection.
-- [ ] Lưu được course, task và task dependency.
-- [ ] Giao dịch nhiều bước rollback đúng khi phát sinh lỗi.
-- [ ] Embedding được lưu kèm model và dimension.
-- [ ] Query embedding có cùng dimension/model với vector lưu.
-- [ ] Semantic search trả về các kết quả hợp lý trên bộ câu hỏi thử nghiệm.
-- [ ] Khi Ollama không chạy, fallback hoạt động và ghi nhận nguyên nhân.
-
-### `.ics`
-- [ ] File tuân theo cấu trúc RFC 5545.
-- [ ] Thời gian trong file khớp lịch người dùng sau khi chuyển UTC/múi giờ.
-- [ ] Nội dung UTF-8, escape và line folding được xử lý.
-- [ ] File được nhập thử vào ứng dụng lịch mục tiêu.
-
-### Trajectory JSON
-- [ ] JSON parse được và tuân theo schema đã thống nhất.
-- [ ] Ghi được cả trường hợp thành công, lỗi và timeout.
-- [ ] Thời gian và trạng thái cuối cùng có ý nghĩa nhất quán.
-- [ ] Log không chứa secret hoặc dữ liệu không cần thiết.
