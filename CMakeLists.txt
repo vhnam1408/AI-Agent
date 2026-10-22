@@ -53,12 +53,20 @@ endif()
 # ══════════════════════════════════════════════════════════════════════════════
 # Executable Target: ai_agent
 # ══════════════════════════════════════════════════════════════════════════════
+# Khung Agent dùng chung cho chương trình và kiểm thử mock (không cần Ollama).
+add_library(agent_core STATIC src/agent/agent_loop.cpp)
+target_include_directories(agent_core PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 add_executable(ai_agent
     src/main.cpp
     src/client/ollama_client.cpp
 )
 
 target_link_libraries(ai_agent PRIVATE
+    agent_core
     CURL::libcurl
 )
 
@@ -91,6 +99,10 @@ add_custom_command(TARGET ai_agent POST_BUILD
 # Kiểm thử Client TASK-01; giữ nguyên cấu hình build của các task đã có.
 include(CTest)
 if(BUILD_TESTING)
+    add_executable(agent_contract_test tests/agent_contract_test.cpp)
+    target_link_libraries(agent_contract_test PRIVATE agent_core)
+    add_test(NAME agent_contract COMMAND agent_contract_test)
+
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
         src/client/ollama_client.cpp
