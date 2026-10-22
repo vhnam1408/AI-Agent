@@ -2,10 +2,14 @@
 
 #include <string>
 #include <deque>
+#include <cstddef>
 #include <cstdint>
 #include <string_view>
 
 namespace edu_schedule {
+
+// TASK-05 chốt giao diện: Config, LoopCheckResult, recordAndCheck(), reset().
+// Thuật toán inline có sẵn được giữ lại; hoàn thiện và kiểm thử thuộc TASK-33.
 
 // Kiểu lặp vô tận
 enum class LoopType : uint8_t {
