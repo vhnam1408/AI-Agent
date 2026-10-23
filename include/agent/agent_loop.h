@@ -83,6 +83,7 @@ protected:
     ToolRegistry* tool_registry_ = nullptr;
 
 private:
+    std::string llm_error_message_;
     void reportStep(StepEvent& event, std::chrono::steady_clock::time_point started_at);
 };
 

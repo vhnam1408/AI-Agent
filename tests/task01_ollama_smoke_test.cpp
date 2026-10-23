@@ -12,7 +12,7 @@
  *
  * @author  Võ Hoàng Nam
  * @project EduSchedule-Agent
- * @std     C++20
+ * @std     C++23
  */
 
 #include "client/llm_client.h"
@@ -206,40 +206,40 @@ namespace console {
         return res;
     }
 
-    void print_response(const LLMResponse& resp, const char* test_name)
+    void print_response(const LLMResult& resp, const char* test_name)
     {
         separator(test_name);
 
-        if (resp.success) {
+        if (resp.has_value()) {
             std::cout << GREEN << "[✓ PASS]" << RESET << '\n';
-            std::cout << MAGENTA << "Model   : " << RESET << resp.model_used << '\n';
+            std::cout << MAGENTA << "Model   : " << RESET << resp->model_used << '\n';
             std::cout << MAGENTA << "Tokens  : " << RESET
-                      << resp.prompt_tokens << " prompt + "
-                      << resp.completion_tokens << " completion = "
-                      << resp.total_tokens << " total\n";
+                      << resp->prompt_tokens << " prompt + "
+                      << resp->completion_tokens << " completion = "
+                      << resp->total_tokens << " total\n";
             std::cout << MAGENTA << "Latency : " << RESET
-                      << resp.latency_ms << " ms"
-                      << "  (Ollama: " << resp.ollama_total_duration_ms << " ms)\n";
-            if (resp.truncated) {
+                      << resp->latency_ms << " ms"
+                      << "  (Ollama: " << resp->ollama_total_duration_ms << " ms)\n";
+            if (resp->truncated) {
                 std::cout << YELLOW << "[WARN] Response bị cắt ngắn (done_reason=length)"
                           << RESET << '\n';
             }
             std::cout << '\n'
                       << BOLD << "── Nội dung phản hồi ──────────────────────────\n" << RESET;
-            if (resp.content.empty()) {
+            if (resp->content.empty()) {
                 std::cout << YELLOW << "(Phản hồi rỗng — model không sinh ra nội dung)\n" << RESET;
             } else {
-                std::cout << sanitize_console(resp.content) << '\n';
+                std::cout << sanitize_console(resp->content) << '\n';
             }
             std::cout << std::flush;
         } else {
             std::cout << RED << "[✗ FAIL]" << RESET << '\n';
             std::cout << RED << "Error type : " << RESET
-                      << to_string(resp.error_type.value_or(LLMErrorType::MalformedJson)) << '\n';
-            std::cout << RED << "HTTP status: " << RESET << resp.http_status << '\n';
+                      << to_string(resp.error().type) << '\n';
+            std::cout << RED << "HTTP status: " << RESET << resp.error().http_status << '\n';
             std::cout << RED << "Message    : " << RESET
-                      << resp.error_message.value_or("(no message)") << '\n';
-            std::cout << RED << "Latency    : " << RESET << resp.latency_ms << " ms\n";
+                      << resp.error().message << '\n';
+            std::cout << RED << "Latency    : " << RESET << resp.error().latency_ms << " ms\n";
             std::cout << std::flush;
         }
     }
@@ -819,15 +819,15 @@ void run_tc01_text_only(LLMClient& client, const LocalizedPrompts& prompts, cons
               << "Đang gửi văn bản đến model " << client.get_config().model_name << "...\n"
               << std::flush;
 
-    const LLMResponse resp = client.chat({ sys, usr });
+    const LLMResult resp = client.chat({ sys, usr });
     console::print_response(resp, prompts.test_title.c_str());
 
     // ── Bước 4: Bóc tách JSON và lưu file deadlines_output.json ────────────────
-    if (resp.success) {
+    if (resp.has_value()) {
         std::cout << console::GREEN << "[2/3] " << console::RESET
                   << "Đang bóc tách JSON deadline...\n";
         const fs::path output_file = "output/deadlines_output.json";
-        if (parse_and_save_deadlines_json(resp.content, output_file)) {
+        if (parse_and_save_deadlines_json(resp->content, output_file)) {
             std::cout << console::GREEN << "[3/3] " << console::RESET
                       << "Hoàn tất! File deadline đầu ra: " << console::BOLD
                       << output_file.string() << console::RESET << "\n";
@@ -891,10 +891,8 @@ void run_tc02_vision(LLMClient& client, const LocalizedPrompts& prompts, const f
     // ── Bước 1: Đọc ảnh và mã hóa sang Base64 ────────────────────────────────
     const auto b64 = LLMClient::load_image_as_base64(image_path);
     if (!b64) {
-        LLMResponse err_resp;
-        err_resp.success       = false;
-        err_resp.error_type    = LLMErrorType::InvalidImage;
-        err_resp.error_message = "Không load được file ảnh — định dạng không hỗ trợ, file rỗng hoặc không có quyền đọc.";
+        LLMResult err_resp = std::unexpected(LLMError{
+            LLMErrorType::InvalidImage, "Khong doc duoc file anh."});
         console::print_response(err_resp, "TC-02: Multimodal Vision");
         return;
     }
@@ -919,12 +917,12 @@ void run_tc02_vision(LLMClient& client, const LocalizedPrompts& prompts, const f
 
     // ── Bước 3: Gọi Vision model qua interface LLMClient ─────────────────────
     const auto msg = ChatMessage::user_with_images(v_prompt, { *b64 });
-    const LLMResponse resp = client.chat({ msg });
+    const LLMResult resp = client.chat({ msg });
 
     console::print_response(resp, "TC-02: Multimodal Vision — Đọc ảnh TKB");
 
-    if (!resp.success) {
-        const std::string err = resp.error_message.value_or("");
+    if (!resp.has_value()) {
+        const std::string err = resp.error().message;
         if (err.find("does not support multimodal") != std::string::npos ||
             err.find("Multimodal data provided") != std::string::npos) {
             std::cout << console::YELLOW
@@ -939,7 +937,7 @@ void run_tc02_vision(LLMClient& client, const LocalizedPrompts& prompts, const f
                       << "║   .\\build\\edu_schedule_poc http://localhost:11434 moondream  ║\n"
                       << "╚══════════════════════════════════════════════════════════════╝\n"
                       << console::RESET << "\n";
-        } else if (resp.http_status == 404 || err.find("not found") != std::string::npos) {
+        } else if (resp.error().http_status == 404 || err.find("not found") != std::string::npos) {
             std::cout << console::YELLOW
                       << "\n[CHẨN ĐOÁN]: Model '" << client.get_config().model_name
                       << "' chưa có trên Ollama.\n"
@@ -955,7 +953,7 @@ void run_tc02_vision(LLMClient& client, const LocalizedPrompts& prompts, const f
               << " Đang bóc tách JSON từ phản hồi AI...\n";
 
     const fs::path output_file = "output/schedule_output.json";
-    const bool saved = parse_and_save_schedule_json(resp.content, output_file);
+    const bool saved = parse_and_save_schedule_json(resp->content, output_file);
 
     if (saved) {
         std::cout << console::GREEN << "[4/4]" << console::RESET
@@ -967,7 +965,7 @@ void run_tc02_vision(LLMClient& client, const LocalizedPrompts& prompts, const f
 /**
  * @brief TC-03: Error Handling — Kết nối sai port + timeout cực ngắn.
  *
- * Chứng minh hệ thống KHÔNG crash, mọi lỗi được đóng gói trong LLMResponse.
+ * Chứng minh hệ thống KHÔNG crash, mọi lỗi được trả qua nhánh LLMError của LLMResult.
  */
 void run_tc03_error_handling()
 {
@@ -985,17 +983,17 @@ void run_tc03_error_handling()
 
         // Polymorphism qua factory
         auto client = create_llm_client("ollama", cfg);
-        const LLMResponse resp = client->chat("Xin chào");
+        const LLMResult resp = client->chat("Xin chào");
 
-        if (!resp.success &&
-            resp.error_type == LLMErrorType::ConnectionRefused) {
+        if (!resp.has_value() &&
+            resp.error().type == LLMErrorType::ConnectionRefused) {
             std::cout << console::GREEN << "  [✓ PASS]" << console::RESET
                       << " Bắt được ConnectionRefused: "
-                      << resp.error_message.value_or("") << '\n';
+                      << resp.error().message << '\n';
         } else {
             std::cout << console::RED << "  [? UNEXPECTED]" << console::RESET
-                      << " success=" << resp.success
-                      << " error=" << to_string(resp.error_type.value_or(LLMErrorType::HttpError))
+                      << " success=" << resp.has_value()
+                      << " error=" << to_string((resp ? LLMErrorType::HttpError : resp.error().type))
                       << '\n';
         }
     }
@@ -1012,14 +1010,14 @@ void run_tc03_error_handling()
         cfg.connect_timeout_ms = 1;
 
         auto client = create_llm_client("ollama", cfg);
-        const LLMResponse resp = client->chat("Test timeout");
+        const LLMResult resp = client->chat("Test timeout");
 
-        if (!resp.success &&
-           (resp.error_type == LLMErrorType::Timeout ||
-            resp.error_type == LLMErrorType::ConnectionRefused)) {
+        if (!resp.has_value() &&
+           (resp.error().type == LLMErrorType::Timeout ||
+            resp.error().type == LLMErrorType::ConnectionRefused)) {
             std::cout << console::GREEN << "  [✓ PASS]" << console::RESET
                       << " Bắt được lỗi timeout/connection: "
-                      << resp.error_message.value_or("") << '\n';
+                      << resp.error().message << '\n';
         } else {
             // Nếu server phản hồi trong vòng 1ms (cực kỳ hiếm), test này pass bình thường
             std::cout << console::YELLOW << "  [~ NOTE]" << console::RESET

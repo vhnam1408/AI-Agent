@@ -67,7 +67,7 @@ public:
     OllamaClient(OllamaClient&&)            = default;
     OllamaClient& operator=(OllamaClient&&) = default;
 
-    [[nodiscard]] LLMResponse
+    [[nodiscard]] LLMResult
     chat(const std::vector<ChatMessage>& messages) override;
 
     using LLMClient::chat; // Cho phép gọi chat("Xin chao") trên OllamaClient.
@@ -89,7 +89,7 @@ private:
     [[nodiscard]] HttpResult
     http_post(const std::string& url, const std::string& json_body);
 
-    [[nodiscard]] LLMResponse
+    [[nodiscard]] LLMResult
     parse_ollama_response(const HttpResult& result, long long latency_ms) const;
 
     [[nodiscard]] static LLMErrorType map_curl_error(CURLcode code) noexcept;

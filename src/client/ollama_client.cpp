@@ -2,6 +2,8 @@
 
 #include <cctype>
 #include <chrono>
+#include <cmath>
+#include <limits>
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
@@ -113,11 +115,21 @@ const LLMConfig& OllamaClient::get_config() const noexcept
     return m_config;
 }
 
-LLMResponse OllamaClient::chat(const std::vector<ChatMessage>& messages)
+LLMResult OllamaClient::chat(const std::vector<ChatMessage>& messages)
 {
     if (messages.empty()) {
-        return make_error(LLMErrorType::MalformedJson,
+        return make_error(LLMErrorType::InvalidRequest,
                           "messages vector is empty — không có gì để gửi.");
+    }
+
+    // Kiểm tra trước khi gửi, tránh lỗi cấu hình bị nhầm thành lỗi của server.
+    if (m_config.model_name.find_first_not_of(" \t\r\n") == std::string::npos ||
+        !(m_config.base_url.starts_with("http://") || m_config.base_url.starts_with("https://")) ||
+        !std::isfinite(m_config.temperature) ||
+        m_config.temperature < 0 || m_config.temperature > 2 ||
+        m_config.timeout_ms <= 0 || m_config.connect_timeout_ms <= 0) {
+        return make_error(LLMErrorType::InvalidRequest,
+                          "Can URL HTTP(S), model, temperature 0..2 va timeout duong.");
     }
 
     // Ba việc chính: tạo JSON, gửi HTTP, đọc JSON trả về.
@@ -143,6 +155,8 @@ LLMResponse OllamaClient::chat(const std::vector<ChatMessage>& messages)
         return parse_ollama_response(result, latency_ms);
     } catch (const nlohmann::json::exception& error) {
         return make_error(LLMErrorType::MalformedJson, error.what());
+    } catch (const std::runtime_error& error) {
+        return make_error(LLMErrorType::NetworkError, error.what());
     }
 }
 
@@ -238,7 +252,7 @@ OllamaClient::http_post(const std::string& url, const std::string& json_body)
     curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS,       m_config.timeout_ms);
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, m_config.connect_timeout_ms);
 
-    // SSL (khi dùng Ngrok/Colab với self-signed cert)
+    // Xác minh HTTPS của server, bao gồm địa chỉ ngrok.
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, m_config.verify_ssl ? 1L : 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, m_config.verify_ssl ? 2L : 0L);
 
@@ -268,14 +282,21 @@ OllamaClient::http_post(const std::string& url, const std::string& json_body)
     return result;
 }
 
-LLMResponse OllamaClient::parse_ollama_response(
+LLMResult OllamaClient::parse_ollama_response(
     const HttpResult& result,
     long long         latency_ms) const
 {
     if (result.curl_code != CURLE_OK) {
         const LLMErrorType err_type = map_curl_error(result.curl_code);
-        const std::string  err_msg  =
+        std::string err_msg =
             std::string("[libcurl] ") + curl_easy_strerror(result.curl_code);
+        if (err_type == LLMErrorType::Timeout) {
+            err_msg += " | Qua thoi gian cho. Kiem tra model da san sang; "
+                       "co the tang timeout_ms hoac giam max_tokens.";
+        } else {
+            err_msg += " | Kiem tra Internet, URL Ollama va phien Kaggle/ngrok con chay. "
+                       "localhost tren Windows chi tro den may Windows.";
+        }
         return make_error(err_type, err_msg, 0, latency_ms);
     }
 
@@ -307,6 +328,20 @@ LLMResponse OllamaClient::parse_ollama_response(
 
     // .value() cũng có thể báo lỗi nếu trường tồn tại nhưng sai kiểu.
     try {
+        // Không để số âm, số thực hoặc số quá lớn trở thành thống kê token sai.
+        for (const char* field : {"prompt_eval_count", "eval_count"}) {
+            if (j.contains(field) && (!j[field].is_number_integer() ||
+                j[field] < 0 || j[field] > std::numeric_limits<int>::max())) {
+                return make_error(LLMErrorType::MalformedJson,
+                                  std::string("Invalid field: ") + field,
+                                  static_cast<int>(result.status_code), latency_ms);
+            }
+        }
+        if (j.contains("total_duration") && (!j["total_duration"].is_number_integer() ||
+            j["total_duration"] < 0 || j["total_duration"] > std::numeric_limits<int64_t>::max())) {
+            return make_error(LLMErrorType::MalformedJson, "Invalid total_duration",
+                              static_cast<int>(result.status_code), latency_ms);
+        }
         LLMResponse resp;
         resp.latency_ms   = latency_ms;
         resp.http_status  = static_cast<int>(result.status_code);
@@ -315,6 +350,10 @@ LLMResponse OllamaClient::parse_ollama_response(
         // Token counts (Harness metrics)
         resp.prompt_tokens     = j.value("prompt_eval_count", 0);
         resp.completion_tokens = j.value("eval_count",        0);
+        if (resp.prompt_tokens > std::numeric_limits<int>::max() - resp.completion_tokens) {
+            return make_error(LLMErrorType::MalformedJson, "Token total is too large",
+                              static_cast<int>(result.status_code), latency_ms);
+        }
         resp.total_tokens      = resp.prompt_tokens + resp.completion_tokens;
 
         // Thời gian từ Ollama (nanoseconds → milliseconds)
@@ -325,7 +364,6 @@ LLMResponse OllamaClient::parse_ollama_response(
         resp.truncated = (j.value("done_reason", std::string("stop")) == "length");
 
         resp.content = j.at("message").at("content").get<std::string>();
-        resp.success = true;
         return resp;
     } catch (const nlohmann::json::exception& e) {
         // JSON hợp lệ nhưng schema không đúng — trường hợp Ollama version cũ
@@ -343,9 +381,7 @@ LLMErrorType OllamaClient::map_curl_error(CURLcode code) noexcept
     switch (code) {
         case CURLE_OPERATION_TIMEDOUT:   return LLMErrorType::Timeout;
         case CURLE_COULDNT_CONNECT:      return LLMErrorType::ConnectionRefused;
-        case CURLE_COULDNT_RESOLVE_HOST: return LLMErrorType::ConnectionRefused;
-        case CURLE_SSL_CONNECT_ERROR:    return LLMErrorType::ConnectionRefused;
-        default:                         return LLMErrorType::ConnectionRefused;
+        default:                         return LLMErrorType::NetworkError;
     }
 }
 
