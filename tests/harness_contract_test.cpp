@@ -9,6 +9,10 @@
 #include <iostream>
 #include <memory>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace edu_schedule;
 
 // Mock Agent phục vụ kiểm thử độc lập cho Harness (không phụ thuộc mạng hay Ollama)
@@ -28,6 +32,10 @@ private:
 };
 
 int main() {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+#endif
     std::cout << "=== BẮT ĐẦU KIỂM THỬ TASK-08: HARNESS CONTRACT ===\n";
 
     // 1. Kiểm thử Environment

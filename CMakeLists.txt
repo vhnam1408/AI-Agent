@@ -44,7 +44,7 @@ endif()
 # Dependencies: CURL & SQLite3
 # ══════════════════════════════════════════════════════════════════════════════
 find_package(CURL REQUIRED)
-find_package(SQLite3 QUIET)
+find_package(SQLite3 REQUIRED)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Include Directories: include/ and src/
@@ -72,6 +72,7 @@ target_include_directories(agent_core PUBLIC
 add_executable(ai_agent
     src/main.cpp
     src/client/ollama_client.cpp
+    src/tools/memory_tool.cpp
 )
 
 target_link_libraries(ai_agent PRIVATE
@@ -84,6 +85,8 @@ if(SQLite3_FOUND)
         target_link_libraries(ai_agent PRIVATE SQLite3::SQLite3)
     elseif(TARGET SQLite::SQLite3)
         target_link_libraries(ai_agent PRIVATE SQLite::SQLite3)
+    else()
+        target_link_libraries(ai_agent PRIVATE ${SQLite3_LIBRARIES})
     endif()
 endif()
 
@@ -111,6 +114,19 @@ if(BUILD_TESTING)
     add_executable(agent_contract_test tests/agent_contract_test.cpp)
     target_link_libraries(agent_contract_test PRIVATE agent_core)
     add_test(NAME agent_contract COMMAND agent_contract_test)
+
+    add_executable(memory_tool_test
+        tests/memory_tool_test.cpp
+        src/tools/memory_tool.cpp
+    )
+    if(TARGET SQLite3::SQLite3)
+        target_link_libraries(memory_tool_test PRIVATE SQLite3::SQLite3)
+    elseif(TARGET SQLite::SQLite3)
+        target_link_libraries(memory_tool_test PRIVATE SQLite::SQLite3)
+    else()
+        target_link_libraries(memory_tool_test PRIVATE ${SQLite3_LIBRARIES})
+    endif()
+    add_test(NAME memory_tool COMMAND memory_tool_test)
 
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
