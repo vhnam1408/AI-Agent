@@ -33,9 +33,11 @@ std::string AgentLoop::run(std::string_view user_goal) {
 
         // 1. Quan sát và yêu cầu LLM đưa ra quyết định.
         event.observation = observe(observation);
+        llm_error_message_.clear();
         event.decision = think(step, event.observation);
         if (!event.decision) {
-            event.error_message = "Loi: LLM khong tra duoc quyet dinh.";
+            event.error_message = llm_error_message_.empty()
+                ? "Loi: LLM khong tra duoc quyet dinh." : llm_error_message_;
             reportStep(event, started_at);
             onFinished(event.error_message);
             return event.error_message;
@@ -105,12 +107,19 @@ std::string AgentLoop::observe(const std::string& input) {
 }
 
 std::optional<AgentDecision> AgentLoop::think(int, const std::string& observation) {
-    if (!llm_client_) return std::nullopt;
+    if (!llm_client_) {
+        llm_error_message_ = "Chua gan LLMClient cho Agent.";
+        return std::nullopt;
+    }
     history_.push_back(ChatMessage::user("Observation: " + observation));
-    const LLMResponse response = llm_client_->chat(history_);
-    if (!response.success) return std::nullopt;
-    history_.push_back(ChatMessage::assistant(response.content));
-    return parseDecision(response.content);
+    const LLMResult response = llm_client_->chat(history_);
+    if (!response) {
+        llm_error_message_ = std::string(to_string(response.error().type)) + ": " +
+                             response.error().message;
+        return std::nullopt;
+    }
+    history_.push_back(ChatMessage::assistant(response->content));
+    return parseDecision(response->content);
 }
 
 ToolResult AgentLoop::act(const AgentDecision& decision) {

@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <expected>
 #include <utility>
 #include <filesystem>
 #include <memory>
@@ -11,7 +12,9 @@
 namespace edu_schedule {
 
 enum class LLMErrorType : uint8_t {
-    ConnectionRefused,  ///< Ollama server không chạy hoặc sai host/port
+    InvalidRequest,     ///< Đầu vào hoặc cấu hình không hợp lệ
+    NetworkError,       ///< DNS, TLS hoặc lỗi truyền dữ liệu
+    ConnectionRefused,  ///< Server/cổng không chấp nhận kết nối
     Timeout,            ///< Vượt quá timeout_ms trước khi nhận response
     MalformedJson,      ///< Server trả về JSON không hợp lệ hoặc sai schema
     HttpError,          ///< HTTP status code != 200 (4xx/5xx)
@@ -21,6 +24,8 @@ enum class LLMErrorType : uint8_t {
 [[nodiscard]] constexpr std::string_view to_string(LLMErrorType err) noexcept
 {
     switch (err) {
+        case LLMErrorType::InvalidRequest:    return "InvalidRequest";
+        case LLMErrorType::NetworkError:      return "NetworkError";
         case LLMErrorType::ConnectionRefused: return "ConnectionRefused";
         case LLMErrorType::Timeout:           return "Timeout";
         case LLMErrorType::MalformedJson:     return "MalformedJson";
@@ -38,7 +43,7 @@ struct LLMConfig {
     int         max_tokens          = 2048;   ///< Số dương: giới hạn token; <= 0: dùng mặc định server
     long        timeout_ms          = 120000; ///< Timeout tổng (ms)
     long        connect_timeout_ms  = 10000;  ///< Timeout kết nối riêng (ms)
-    bool        verify_ssl          = true;   ///< false khi dùng Ngrok/Colab self-signed cert
+    bool        verify_ssl          = true;   ///< Xác minh chứng chỉ HTTPS, kể cả URL ngrok
     bool        follow_redirect     = true;   ///< Theo HTTP redirect (Ngrok hay redirect)
 };
 
@@ -81,10 +86,9 @@ struct ChatMessage {
     }
 };
 
-// Kiểm tra success trước khi sử dụng content.
+// Chỉ chứa dữ liệu khi gọi thành công. Lỗi được giữ riêng trong LLMError.
 struct LLMResponse {
-    std::string content;              ///< Nội dung phản hồi (khi success = true)
-    bool        success      = false; ///< true nếu gọi thành công
+    std::string content;
 
     int prompt_tokens     = 0; ///< prompt_eval_count từ Ollama
     int completion_tokens = 0; ///< eval_count từ Ollama
@@ -93,13 +97,21 @@ struct LLMResponse {
     long long latency_ms           = 0; ///< Đo bằng std::chrono từ gửi đến nhận xong
     long long ollama_total_duration_ms = 0; ///< total_duration từ Ollama (ns → ms)
 
-    std::optional<LLMErrorType> error_type;    ///< Phân loại lỗi
-    std::optional<std::string>  error_message; ///< Mô tả chi tiết lỗi
     int                         http_status = 0; ///< HTTP status code (0 nếu không kết nối được)
 
     std::string model_used;    ///< Tên model thực tế đã dùng
     bool        truncated = false; ///< true nếu done_reason = "length"
 };
+
+struct LLMError {
+    LLMErrorType type;
+    std::string message;
+    int http_status = 0;    // 0 nếu chưa nhận được HTTP response.
+    long long latency_ms = 0;
+};
+
+// Có kết quả thì đọc result->content; có lỗi thì đọc result.error().message.
+using LLMResult = std::expected<LLMResponse, LLMError>;
 
 // Giao diện: lớp con phải tự cài đặt chat(), set_config(), get_config().
 class LLMClient {
@@ -116,10 +128,10 @@ public:
     LLMClient(LLMClient&&)                 = default;
     LLMClient& operator=(LLMClient&&)      = default;
 
-    [[nodiscard]] virtual LLMResponse
+    [[nodiscard]] virtual LLMResult
     chat(const std::vector<ChatMessage>& messages) = 0;
 
-    [[nodiscard]] virtual LLMResponse
+    [[nodiscard]] virtual LLMResult
     chat(std::string_view prompt)
     {
         return chat({ ChatMessage::user(std::string(prompt)) });
@@ -142,19 +154,13 @@ public:
     load_images_as_base64(const std::vector<std::filesystem::path>& paths);
 
 protected:
-    [[nodiscard]] static LLMResponse make_error(
+    [[nodiscard]] static LLMResult make_error(
         LLMErrorType        type,
         std::string         message,
         int                 http_status = 0,
         long long           latency_ms  = 0)
     {
-        LLMResponse resp;
-        resp.success       = false;
-        resp.error_type    = type;
-        resp.error_message = std::move(message);
-        resp.http_status   = http_status;
-        resp.latency_ms    = latency_ms;
-        return resp;
+        return std::unexpected(LLMError{type, std::move(message), http_status, latency_ms});
     }
 };
 

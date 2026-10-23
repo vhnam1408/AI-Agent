@@ -21,15 +21,14 @@ public:
     bool fail = false;
     int calls = 0;
 
-    LLMResponse chat(const std::vector<ChatMessage>& messages) override {
+    LLMResult chat(const std::vector<ChatMessage>& messages) override {
         ++calls;
-        if (fail) return {};
+        if (fail) return make_error(LLMErrorType::ConnectionRefused, "Mock connection error");
         if (calls == 2 && !keep_calling) {
             check(messages.back().content.find("Thong tin T1") != std::string::npos,
                   "Tool result must reach the next LLM step");
         }
         LLMResponse response;
-        response.success = true;
         response.content = (calls == 1 || keep_calling) ? "mock_lookup" : "Da xong";
         return response;
     }
@@ -130,6 +129,8 @@ int main() {
         limited.run("T1");
         check(!events.back().decision && !events.back().error_message.empty(),
               "LLM failure event is missing");
+        check(events.back().error_message.find("Mock connection error") != std::string::npos,
+              "LLM error detail must reach the hook");
         client->fail = false;
         DemoAgent repeated(client, 6);
         repeated.setToolRegistry(registry);
