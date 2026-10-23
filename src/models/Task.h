@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <optional>
@@ -11,35 +10,22 @@
 
 namespace edu_schedule {
 
-// QUY ƯỚC BẮT BUỘC:
-// - id không rỗng và duy nhất trong tập Task.
-// - deadline là một mốc, không chiếm lịch và không tự sinh StudySession.
-// - estimatedMinutes == 0 nghĩa là chưa biết; phải làm rõ trước khi xếp lịch.
-// - Nếu đã biết thời lượng: 0 <= remainingMinutes <= estimatedMinutes.
-// - dependencies chứa TaskId, chỉ tạo khi có căn cứ; không suy đoán từ câu nói.
-// - courseId có thể rỗng; nếu có phải tham chiếu Course::id hợp lệ.
+// Task is a value-like domain model. Ownership of Task objects is handled by
+// TaskDomain through std::unique_ptr; Task itself does not own other Tasks.
 struct Task {
     TaskId id;
     std::string title;
     std::string courseId;
-
     std::optional<TimePoint> deadline;
-
-    int estimatedMinutes = 0;
+    int estimatedMinutes = 0; // 0 means unknown
     int remainingMinutes = 0;
-
     Priority priority = Priority::Mid;
     TaskStatus status = TaskStatus::Todo;
-
     std::vector<TaskId> dependencies;
 
-    [[nodiscard]]
-    bool isOverdue(TimePoint now) const noexcept {
-        return deadline.has_value()
-            && now > *deadline
-            && status != TaskStatus::Done
-            && status != TaskStatus::Cancelled;
-    }
+    [[nodiscard]] bool isOverdue(TimePoint now) const noexcept;
+    [[nodiscard]] bool hasValidDuration() const noexcept;
+    [[nodiscard]] bool isValid() const noexcept;
 };
 
 } // namespace edu_schedule

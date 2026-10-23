@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -6,14 +5,13 @@
 
 namespace edu_schedule {
 
-// QUY ƯỚC BẮT BUỘC:
-// - id ổn định và duy nhất; Task chỉ tham chiếu bằng courseId.
-// - Course không sở hữu Task.
-// - Priority của Course là gợi ý mặc định, không âm thầm ghi đè Task đã có.
+// Course does not own Tasks; Tasks refer to a Course by courseId.
 struct Course {
     std::string id;
     std::string name;
     Priority priority = Priority::Mid;
+
+    [[nodiscard]] bool isValid() const noexcept;
 };
 
 } // namespace edu_schedule
