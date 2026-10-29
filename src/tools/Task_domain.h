@@ -1,15 +1,14 @@
+
 #pragma once
 
 #include "../models/Task.h"
-#include "../models/TimePoint.h"
+#include "../models/domain_types.h"
 
 #include <string>
 #include <string_view>
 #include <vector>
 
 namespace edu_schedule {
-
-using TaskId = std::string;
 
 // QUY ƯỚC BẮT BUỘC: mọi khoảng thời gian là nửa mở [start, end) và start < end.
 // Vì vậy 09:00-10:00 và 10:00-11:00 không chồng lấn.
@@ -62,6 +61,11 @@ struct Schedule {
     std::vector<StudySession> studySessions;
 };
 
+// QUY ƯỚC BẮT BUỘC:
+// - Đây là kết quả proposal, chưa phải dữ liệu đã commit.
+// - Scheduled: xếp đủ; PartiallyScheduled: còn phần chưa xếp.
+// - Infeasible: không có phương án hợp lệ; NeedsConfirmation: cần làm rõ.
+// - Mọi proposal đều phải đi qua Preview -> Confirm -> Commit.
 enum class SchedulingStatus {
     Scheduled,
     PartiallyScheduled,
@@ -76,6 +80,7 @@ struct SchedulingResult {
     std::vector<std::string> reasons;
 };
 
+// Kiểm tra phiên học có đè lên sự kiện cố định hay không.
 [[nodiscard]]
 inline bool conflictsWithFixedEvent(
     const StudySession& session,
@@ -84,14 +89,17 @@ inline bool conflictsWithFixedEvent(
     return session.time.overlaps(event.time);
 }
 
+// Kiểm tra phiên học có trùng với phiên học khác hay không.
 [[nodiscard]]
 inline bool conflictsWithSession(
     const StudySession& first,
     const StudySession& second
 ) noexcept {
-    if (first.id == second.id) {
+    // Chỉ bỏ qua chính phiên có ID hợp lệ. Validator vẫn phải phát hiện ID trùng.
+    if (!first.id.empty() && first.id == second.id) {
         return false;
     }
+
     return first.time.overlaps(second.time);
 }
 
