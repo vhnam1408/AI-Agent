@@ -7,7 +7,6 @@
 
 #include <chrono>
 #include <filesystem>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -55,18 +54,6 @@ public:
         if (!evaluator_) {
             evaluator_ = std::make_shared<KeywordEvaluator>();
         }
-    }
-
-    void setEnvironment(std::shared_ptr<IEnvironment> env) {
-        environment_ = std::move(env);
-    }
-
-    void setEvaluator(std::shared_ptr<IEvaluator> evaluator) {
-        evaluator_ = std::move(evaluator);
-    }
-
-    void setOutputDirectory(std::filesystem::path dir) {
-        outputDirectory_ = std::move(dir);
     }
 
     // ========================================================================
@@ -127,6 +114,9 @@ public:
         const bool agentSucceeded = !finalAnswer.starts_with("Loi") &&
                                     !finalAnswer.starts_with("Dung do lap");
         trajectory.setSuccess(agentSucceeded);
+        if (!agentSucceeded) {
+            trajectory.setErrorMessage(finalAnswer);
+        }
 
         // 4. Giám khảo (Evaluator) chấm điểm độc lập
         EvaluationResult evalResult = evaluator_->evaluate(trajectory, task);

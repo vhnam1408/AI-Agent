@@ -127,6 +127,19 @@ if(BUILD_TESTING)
     target_link_libraries(scheduler_test PRIVATE scheduler_core)
     add_test(NAME scheduler COMMAND scheduler_test)
 
+    if(SQLite3_FOUND)
+        add_executable(memory_tool_test
+            tests/memory_tool_test.cpp
+            src/tools/memory_tool.cpp
+        )
+        if(TARGET SQLite3::SQLite3)
+            target_link_libraries(memory_tool_test PRIVATE SQLite3::SQLite3)
+        elseif(TARGET SQLite::SQLite3)
+            target_link_libraries(memory_tool_test PRIVATE SQLite::SQLite3)
+        endif()
+        add_test(NAME memory_tool COMMAND memory_tool_test)
+    endif()
+
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
         src/client/ollama_client.cpp

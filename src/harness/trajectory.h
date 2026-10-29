@@ -1,10 +1,8 @@
 #pragma once
 
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <string>
-#include <string_view>
 #include <vector>
 
 #include <nlohmann/json.hpp>
@@ -54,20 +52,12 @@ public:
     explicit Trajectory(std::string taskId, std::string modelName = "")
         : taskId_(std::move(taskId)), model_(std::move(modelName)) {}
 
-    void setTaskId(std::string taskId) { taskId_ = std::move(taskId); }
     [[nodiscard]] const std::string& getTaskId() const noexcept { return taskId_; }
-
-    void setModel(std::string model) { model_ = std::move(model); }
-    [[nodiscard]] const std::string& getModel() const noexcept { return model_; }
 
     void setSuccess(bool success) noexcept { success_ = success; }
     [[nodiscard]] bool isSuccess() const noexcept { return success_; }
 
-    void setTotalTokens(int tokens) noexcept { totalTokens_ = tokens; }
-    [[nodiscard]] int getTotalTokens() const noexcept { return totalTokens_; }
-
     void setTotalTimeMs(long long ms) noexcept { totalTimeMs_ = ms; }
-    [[nodiscard]] long long getTotalTimeMs() const noexcept { return totalTimeMs_; }
 
     void setFinalAnswer(std::string answer) { finalAnswer_ = std::move(answer); }
     [[nodiscard]] const std::string& getFinalAnswer() const noexcept { return finalAnswer_; }
@@ -135,4 +125,3 @@ private:
 };
 
 } // namespace edu_schedule
-
