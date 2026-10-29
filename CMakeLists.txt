@@ -69,6 +69,16 @@ target_include_directories(agent_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+# TASK-15: thuật toán phân bổ lịch, validator và chiến lược ưu tiên.
+add_library(scheduler_core STATIC
+    src/scheduler/priority_strategy.cpp
+    src/scheduler/constraint_validator.cpp
+    src/scheduler/scheduler.cpp
+)
+target_include_directories(scheduler_core PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 add_executable(ai_agent
     src/main.cpp
     src/client/ollama_client.cpp
@@ -76,6 +86,7 @@ add_executable(ai_agent
 
 target_link_libraries(ai_agent PRIVATE
     agent_core
+    scheduler_core
     CURL::libcurl
 )
 
@@ -111,6 +122,10 @@ if(BUILD_TESTING)
     add_executable(agent_contract_test tests/agent_contract_test.cpp)
     target_link_libraries(agent_contract_test PRIVATE agent_core)
     add_test(NAME agent_contract COMMAND agent_contract_test)
+
+    add_executable(scheduler_test tests/scheduler_test.cpp)
+    target_link_libraries(scheduler_test PRIVATE scheduler_core)
+    add_test(NAME scheduler COMMAND scheduler_test)
 
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
