@@ -4,33 +4,6 @@
 
 namespace edu_schedule {
 
-bool TimeSlot::isValid() const noexcept {
-    return start < end;
-}
-
-bool TimeSlot::overlaps(const TimeSlot& other) const noexcept {
-    return start < other.end && other.start < end;
-}
-
-bool conflictsWithFixedEvent(const StudySession& session, const FixedEvent& event) noexcept {
-    return session.time.overlaps(event.time);
-}
-
-bool conflictsWithSession(const StudySession& first, const StudySession& second) noexcept {
-    if (first.id == second.id) {
-        return false;
-    }
-    return first.time.overlaps(second.time);
-}
-
-bool isValidTaskId(std::string_view id) noexcept {
-    return !id.empty();
-}
-
-bool isValidDuration(int minutes) noexcept {
-    return minutes > 0;
-}
-
 bool TaskDomain::addTask(std::unique_ptr<Task> task) {
     if (!task || !task->isValid()) {
         return false;
