@@ -1,11 +1,13 @@
-
 #pragma once
 
 #include "../models/Task.h"
+#include "../models/Course.h"
 #include "../models/domain_types.h"
 
+#include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace edu_schedule {
@@ -112,5 +114,31 @@ inline bool isValidTaskId(std::string_view id) noexcept {
 inline bool isValidDuration(int minutes) noexcept {
     return minutes > 0;
 }
+
+// Owns Task and Course objects via unique_ptr. Returned pointers are borrowed;
+// they remain valid until that item is erased or the domain is destroyed.
+class TaskDomain {
+public:
+    TaskDomain() = default;
+    TaskDomain(const TaskDomain&) = delete;
+    TaskDomain& operator=(const TaskDomain&) = delete;
+    TaskDomain(TaskDomain&&) noexcept = default;
+    TaskDomain& operator=(TaskDomain&&) noexcept = default;
+
+    bool addTask(std::unique_ptr<Task> task);
+    bool addCourse(std::unique_ptr<Course> course);
+    [[nodiscard]] Task* findTask(std::string_view id);
+    [[nodiscard]] const Task* findTask(std::string_view id) const;
+    [[nodiscard]] Course* findCourse(std::string_view id);
+    [[nodiscard]] const Course* findCourse(std::string_view id) const;
+    [[nodiscard]] bool removeTask(std::string_view id);
+    [[nodiscard]] bool removeCourse(std::string_view id);
+    [[nodiscard]] std::size_t taskCount() const noexcept;
+    [[nodiscard]] std::size_t courseCount() const noexcept;
+
+private:
+    std::unordered_map<TaskId, std::unique_ptr<Task>> tasks_;
+    std::unordered_map<std::string, std::unique_ptr<Course>> courses_;
+};
 
 } // namespace edu_schedule
