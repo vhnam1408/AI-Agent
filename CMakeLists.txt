@@ -127,6 +127,15 @@ if(BUILD_TESTING)
     target_link_libraries(scheduler_test PRIVATE scheduler_core)
     add_test(NAME scheduler COMMAND scheduler_test)
 
+    add_executable(trajectory_ics_test
+        tests/trajectory_ics_test.cpp
+        src/harness/trajectory.cpp
+    )
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_libraries(trajectory_ics_test PRIVATE stdc++exp)
+    endif()
+    add_test(NAME trajectory_ics COMMAND trajectory_ics_test)
+
     if(SQLite3_FOUND)
         add_executable(memory_tool_test
             tests/memory_tool_test.cpp

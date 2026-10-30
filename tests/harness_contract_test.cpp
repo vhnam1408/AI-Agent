@@ -5,11 +5,24 @@
 #include "agent/agent_loop.h"
 #include "client/llm_client.h"
 
-#include <cassert>
+#include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <memory>
+#include <string_view>
 
 using namespace edu_schedule;
+
+namespace {
+
+void check(bool condition, std::string_view message) {
+    if (!condition) {
+        std::cerr << "[FAILED] " << message << '\n';
+        std::exit(EXIT_FAILURE);
+    }
+}
+
+} // namespace
 
 // Mock Agent phục vụ kiểm thử độc lập cho Harness (không phụ thuộc mạng hay Ollama)
 class MockTestAgent : public AgentLoop {
@@ -33,15 +46,17 @@ int main() {
     // 1. Kiểm thử Environment
     NativeEnvironment nativeEnv;
     nativeEnv.setup();
-    assert(!nativeEnv.isSandbox());
+    check(!nativeEnv.isSandbox(), "NativeEnvironment khong phai sandbox");
     nativeEnv.teardown();
     std::cout << "[PASS] NativeEnvironment hoạt động chính xác.\n";
 
     SandboxEnvironment sandboxEnv("test_sandbox");
     sandboxEnv.setup();
-    assert(sandboxEnv.isSandbox());
-    assert(sandboxEnv.isPathAllowed("test_sandbox/data.txt"));
+    check(sandboxEnv.isSandbox(), "SandboxEnvironment phai la sandbox");
+    check(sandboxEnv.isPathAllowed("test_sandbox/data.txt"), "Duong dan hop le trong sandbox bi chan");
     sandboxEnv.teardown();
+    std::error_code ec;
+    std::filesystem::remove_all("test_sandbox", ec);
     std::cout << "[PASS] SandboxEnvironment hoạt động chính xác.\n";
 
     // 2. Kiểm thử Trajectory & Step serialization
@@ -62,9 +77,9 @@ int main() {
     traj.setTotalTimeMs(500);
 
     const auto jsonOutput = traj.toJson();
-    assert(jsonOutput["task_id"] == "task_test_001");
-    assert(jsonOutput["steps"].size() == 1);
-    assert(jsonOutput["steps"][0]["tool_result"] == "Found task: OOP Assignment");
+    check(jsonOutput["task_id"] == "task_test_001", "Sai task_id");
+    check(jsonOutput["steps"].size() == 1, "Sai so luong steps");
+    check(jsonOutput["steps"][0]["tool_result"] == "Found task: OOP Assignment", "Sai tool_result");
     std::cout << "[PASS] Trajectory và Step xuất JSON chuẩn xác.\n";
 
     // 3. Kiểm thử Evaluator (Strategy Pattern)
@@ -76,8 +91,8 @@ int main() {
 
     KeywordEvaluator keywordEval;
     EvaluationResult evalRes = keywordEval.evaluate(traj, task);
-    assert(evalRes.passed);
-    assert(evalRes.score == 1.0);
+    check(evalRes.passed, "KeywordEvaluator cham sai");
+    check(evalRes.score == 1.0, "Diem KeywordEvaluator sai");
     std::cout << "[PASS] KeywordEvaluator chấm đúng kết quả.\n";
 
     // 4. Kiểm thử HarnessRunner phối hợp cùng AgentLoop qua Observer Hook
@@ -88,12 +103,12 @@ int main() {
     MockTestAgent agent("Đáp án có Deadline và ngày 30/10 đầy đủ.");
     BenchmarkResult benchResult = runner.runTask(agent, task, "mock-vlm");
 
-    assert(benchResult.passed);
-    assert(benchResult.trajectory.stepCount() > 0);
-    assert(benchResult.trajectory.getTaskId() == "task_test_001");
+    check(benchResult.passed, "HarnessRunner runTask that bai");
+    check(benchResult.trajectory.stepCount() > 0, "HarnessRunner khong thu thap duoc step");
+    check(benchResult.trajectory.getTaskId() == "task_test_001", "Sai task_id trong ket qua");
+    std::filesystem::remove_all("output", ec);
     std::cout << "[PASS] HarnessRunner điều phối AgentLoop qua Observer Hook thành công!\n";
 
     std::cout << "=== TẤT CẢ TEST TASK-08 ĐÃ VƯỢT QUA [100% PASS] ===\n";
     return 0;
 }
-
