@@ -1,0 +1,9 @@
+Extract every class from this timetable image as a raw JSON array.
+Every object must have exactly these fields:
+day (integer, Monday=2 to Sunday=8), kind (LT or TH), subject (uppercase Vietnamese as printed),
+room (the exact room identifier and campus), start and end (null when no hours are printed).
+Preserve all classes. Copy room identifiers character by character.
+A hyphen, underscore and period are distinct characters: preserve each original character and its position.
+Never normalize a room identifier into a preferred separator style.
+Do not infer hours, periods, dates or deadlines from cell positions.
+Do not invent unreadable text. Return JSON only, without commentary.
