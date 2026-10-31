@@ -1,0 +1,74 @@
+[
+  {
+    "day": 2,
+    "kind": "LT",
+    "subject": "XÁC SUẤT THỐNG KÊ",
+    "room": "F203 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 2,
+    "kind": "TH",
+    "subject": "XÁC SUẤT THỐNG KÊ",
+    "room": "PM_B4-2_5.3 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 3,
+    "kind": "LT",
+    "subject": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+    "room": "E203 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 3,
+    "kind": "LT",
+    "subject": "MẠNG MÁY TÍNH",
+    "room": "E206 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 4,
+    "kind": "LT",
+    "subject": "TOÁN TỔ HỢP",
+    "room": "F203 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 4,
+    "kind": "TH",
+    "subject": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+    "room": "PM_D202 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 4,
+    "kind": "TH",
+    "subject": "TOÁN TỔ HỢP",
+    "room": "PM_D202 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 7,
+    "kind": "LT",
+    "subject": "VẬT LÝ ĐẠI CƯƠNG 2",
+    "room": "E107 (CS2)",
+    "start": null,
+    "end": null
+  },
+  {
+    "day": 7,
+    "kind": "LT",
+    "subject": "CON NGƯỜI VÀ MÔI TRƯỜNG",
+    "room": "F103 (CS2)",
+    "start": null,
+    "end": null
+  }
+]

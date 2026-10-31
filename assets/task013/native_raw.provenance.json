@@ -1,0 +1,7 @@
+{
+  "source": "task013_evidence.zip/native_raw.json",
+  "sha256": "051d792ca4e68f2d1ce43783b499c24724ca303a08142120ddacd8cc5fe1bcb9",
+  "model": "qwen3.8:27b",
+  "source_commit": "75ee6969f3eb1aeca09e8390857ea6bf9a8de32b",
+  "note": "Original Kaggle response; not a new parser test result."
+}
