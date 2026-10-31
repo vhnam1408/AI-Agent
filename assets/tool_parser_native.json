@@ -1,0 +1,1 @@
+{"done":true,"message":{"role":"assistant","content":"","tool_calls":[{"function":{"name":"task_lookup","arguments":{"task_id":"T1"}}},{"function":{"name":"calculator","arguments":"{\"expression\":\"6 * 7\"}"}}]}}

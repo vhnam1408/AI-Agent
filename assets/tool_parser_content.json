@@ -1,0 +1,1 @@
+{"done":true,"message":{"role":"assistant","content":"{\"tool_name\":\"task_lookup\",\"arguments\":{\"task_id\":\"T1\"}}"}}

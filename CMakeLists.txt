@@ -127,3 +127,36 @@ if(BUILD_TESTING)
                 $<TARGET_FILE:ai_agent> $<TARGET_FILE:ollama_client_smoke_test>)
     endif()
 endif()
+
+# TASK-13: parser and multimodal checks; reuse the existing client unchanged.
+add_library(task13_parser STATIC src/client/tool_parser.cpp)
+target_include_directories(task13_parser PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+if(MSVC)
+    target_compile_options(task13_parser PRIVATE /W4 /utf-8)
+else()
+    target_compile_options(task13_parser PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+if(BUILD_TESTING)
+    add_executable(task13_parser_test tests/tool_parser_test.cpp)
+    target_link_libraries(task13_parser_test PRIVATE task13_parser)
+    add_test(NAME task13_parser COMMAND task13_parser_test "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+
+    add_executable(task13_probe tests/multimodal_probe.cpp src/client/ollama_client.cpp)
+    target_link_libraries(task13_probe PRIVATE task13_parser CURL::libcurl)
+    add_test(NAME task13_image COMMAND task13_probe image-check "${CMAKE_CURRENT_SOURCE_DIR}/assets/timetable.png")
+
+    if(Python3_Interpreter_FOUND)
+        add_test(NAME task13_transport COMMAND ${Python3_EXECUTABLE}
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/multimodal_transport_test.py"
+            $<TARGET_FILE:task13_probe> "${CMAKE_CURRENT_SOURCE_DIR}")
+        add_test(NAME task13_live COMMAND ${Python3_EXECUTABLE}
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/multimodal_live_test.py"
+            $<TARGET_FILE:task13_probe> "${CMAKE_CURRENT_SOURCE_DIR}"
+            "${CMAKE_CURRENT_BINARY_DIR}/results")
+        set_tests_properties(task13_live PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 1200)
+    endif()
+endif()
