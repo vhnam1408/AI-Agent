@@ -95,9 +95,14 @@ public:
         try {
             const auto canonicalSandbox = std::filesystem::weakly_canonical(sandboxDir_);
             const auto canonicalTarget = std::filesystem::weakly_canonical(targetPath);
-            const auto sboxStr = canonicalSandbox.lexically_normal().string();
-            const auto targetStr = canonicalTarget.lexically_normal().string();
-            return targetStr.starts_with(sboxStr);
+            const auto relative = canonicalTarget.lexically_relative(canonicalSandbox);
+            if (relative.empty() || relative == std::filesystem::path(".")) {
+                return canonicalTarget == canonicalSandbox;
+            }
+            // Compare path components instead of string prefixes: `sandbox-old`
+            // must not be treated as a child of `sandbox`.
+            return !relative.is_absolute()
+                && *relative.begin() != std::filesystem::path("..");
         } catch (...) {
             return false;
         }

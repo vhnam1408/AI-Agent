@@ -10,15 +10,13 @@
 
 namespace edu_schedule {
 
-// ============================================================================
 // ITaskRepository: Interface trừu tượng đại diện cho Repository Pattern của Task
-// ----------------------------------------------------------------------------
+
 // QUY ƯỚC BẮT BUỘC:
 // - Cung cấp đầy đủ các thao tác CRUD cơ bản cho thực thể Task.
 // - Tách biệt logic nghiệp vụ khỏi cách thức lưu trữ dữ liệu (Database / Memory).
 // - Các phương thức tra cứu trả về bản sao hoặc std::optional để đảm bảo an toàn,
 //   không làm rò rỉ con trỏ nội bộ có thể bị hủy trong môi trường đa luồng.
-// ============================================================================
 class ITaskRepository {
 public:
     virtual ~ITaskRepository() = default;
@@ -58,13 +56,12 @@ public:
     virtual void clear() noexcept = 0;
 };
 
-// ============================================================================
 // InMemoryTaskRepository: Bản cài đặt đầu tiên lưu trữ trong bộ nhớ RAM (TASK-14)
-// ----------------------------------------------------------------------------
+
 // - Sử dụng cấu trúc bảng băm std::unordered_map để đạt độ phức tạp tìm kiếm O(1).
 // - Đảm bảo tính đóng gói và an toàn dữ liệu cho các luồng xử lý của MVP.
 // - Sẵn sàng để mở rộng hoặc thay thế bằng SQLiteTaskRepository ở TASK-20.
-// ============================================================================
+
 class InMemoryTaskRepository : public ITaskRepository {
 public:
     InMemoryTaskRepository() = default;
