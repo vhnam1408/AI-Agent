@@ -1,0 +1,9 @@
+{
+  "items": [
+    {"kind":"submission","course":"OOP","title":"Báo cáo","location":"LMS","local_date":"2026-10-24","hour":23,"minute":59,"second":0,"event_time_utc":"2026-10-24T16:59:00Z","deadline_utc":"2026-10-24T16:59:00Z"},
+    {"kind":"submission","course":"Mạng máy tính","title":"Bài lab","location":"Lab 2","local_date":"2026-10-28","hour":17,"minute":0,"second":0,"event_time_utc":"2026-10-28T10:00:00Z","deadline_utc":"2026-10-28T10:00:00Z"},
+    {"kind":"exam","course":"OOP","title":"Giữa kỳ","location":"B4","local_date":"2026-10-26","hour":7,"minute":30,"second":0,"event_time_utc":"2026-10-26T00:30:00Z","deadline_utc":null},
+    {"kind":"assigned","course":"OOP","title":"Dự án","location":null,"local_date":"2026-10-20","hour":8,"minute":0,"second":0,"event_time_utc":"2026-10-20T01:00:00Z","deadline_utc":null}
+  ],
+  "note":"Ground truth for scoring only, never sent to the model."
+}

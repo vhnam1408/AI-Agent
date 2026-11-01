@@ -1,0 +1,8 @@
+{
+  "captured_from": "task017_evidence_20261031T145552Z.zip",
+  "archive_sha256": "38924d2bf7a108a23a205988d865df8ed155b9bd030b6d271690f400681b6c06",
+  "captured_files": {
+    "captured_lms_missing_year.json": "ec43e7d8acc9f160587e1d4ce6f5dda159385f2ebd36ef85f540384addedbbae",
+    "captured_lms_weekday_conflict.json": "69932ac11504e6177ed0e909238a8f22ffeb63aeac82da4ce9e3ef47b4b0c2f1"
+  }
+}

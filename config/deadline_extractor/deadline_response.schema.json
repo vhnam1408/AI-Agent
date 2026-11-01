@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TASK-017 model content contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array", "maxItems": 128,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["kind", "course", "title", "date_text", "location", "evidence"],
+        "properties": {
+          "kind": {"enum": ["submission", "exam", "class", "assigned", "other"]},
+          "course": {"type": ["string", "null"], "maxLength": 8192},
+          "title": {"type": ["string", "null"], "maxLength": 8192},
+          "date_text": {"type": ["string", "null"], "maxLength": 8192, "description":"Preserve all printed event dates and clock times in the evidence. Use null for a weekday-only timetable without calendar date/time."},
+          "location": {"type": ["string", "null"], "maxLength": 8192, "description":"Text: preserve the explicitly stated physical place or online destination (platform/portal/email); null only when absent, never infer a default platform. Images: copy room identifier/campus without Phòng:; never repair punctuation."},
+          "evidence": {"type": "string", "minLength": 1, "maxLength": 8192, "description":"Full event source line including course, date and clock; for images retain weekday heading and cell transcript."}
+        }
+      }
+    }
+  }
+}

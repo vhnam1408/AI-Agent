@@ -1,0 +1,220 @@
+{
+  "all_items_valid": false,
+  "default_timezone": "Asia/Ho_Chi_Minh",
+  "items": [
+    {
+      "course": "OOP",
+      "date_text": "24/10/2026 lúc 23:59",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "nộp Báo cáo vào ngày 24/10/2026 lúc 23:59 trên LMS",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "submission",
+      "location": "LMS",
+      "missing_fields": [],
+      "normalized": {
+        "day": 24,
+        "hour": 23,
+        "local_date": "2026-10-24",
+        "minute": 59,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Báo cáo",
+      "validity": "invalid"
+    },
+    {
+      "course": "Mạng máy tính",
+      "date_text": "28/10/2026 lúc 17:00",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "nộp Bài lab vào ngày 28/10/2026 lúc 17:00 tại Lab 2",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "submission",
+      "location": "Lab 2",
+      "missing_fields": [],
+      "normalized": {
+        "day": 28,
+        "hour": 17,
+        "local_date": "2026-10-28",
+        "minute": 0,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Bài lab",
+      "validity": "invalid"
+    },
+    {
+      "course": "OOP",
+      "date_text": "26/10/2026 lúc 07:30",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "thi Giữa kỳ vào ngày 26/10/2026 lúc 07:30 tại B4",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "exam",
+      "location": "B4",
+      "missing_fields": [],
+      "normalized": {
+        "day": 26,
+        "hour": 7,
+        "local_date": "2026-10-26",
+        "minute": 30,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Giữa kỳ",
+      "validity": "invalid"
+    },
+    {
+      "course": "OOP",
+      "date_text": "20/10/2026 lúc 08:00",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "giao Dự án vào ngày 20/10/2026 lúc 08:00",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "assigned",
+      "location": null,
+      "missing_fields": [],
+      "normalized": {
+        "day": 20,
+        "hour": 8,
+        "local_date": "2026-10-20",
+        "minute": 0,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Dự án",
+      "validity": "invalid"
+    }
+  ],
+  "ok": true,
+  "raw_model_content": "{\"items\":[{\"kind\":\"submission\",\"course\":\"OOP\",\"title\":\"Báo cáo\",\"date_text\":\"24/10/2026 lúc 23:59\",\"location\":\"LMS\",\"evidence\":\"nộp Báo cáo vào ngày 24/10/2026 lúc 23:59 trên LMS\"},{\"kind\":\"submission\",\"course\":\"Mạng máy tính\",\"title\":\"Bài lab\",\"date_text\":\"28/10/2026 lúc 17:00\",\"location\":\"Lab 2\",\"evidence\":\"nộp Bài lab vào ngày 28/10/2026 lúc 17:00 tại Lab 2\"},{\"kind\":\"exam\",\"course\":\"OOP\",\"title\":\"Giữa kỳ\",\"date_text\":\"26/10/2026 lúc 07:30\",\"location\":\"B4\",\"evidence\":\"thi Giữa kỳ vào ngày 26/10/2026 lúc 07:30 tại B4\"},{\"kind\":\"assigned\",\"course\":\"OOP\",\"title\":\"Dự án\",\"date_text\":\"20/10/2026 lúc 08:00\",\"location\":null,\"evidence\":\"giao Dự án vào ngày 20/10/2026 lúc 08:00\"}]}",
+  "reference_year": null,
+  "response_metadata": {
+    "http_status": 200,
+    "latency_ms": 70701,
+    "model_used": "qwen3.8:27b",
+    "truncated": false
+  },
+  "source": {
+    "id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+    "image_count": 0,
+    "text": "Đề cương công việc học kỳ năm 2026:\nMôn OOP: nộp Báo cáo vào ngày 24/10/2026 lúc 23:59 trên LMS.\nMôn Mạng máy tính: nộp Bài lab vào ngày 28/10/2026 lúc 17:00 tại Lab 2.\nMôn OOP: thi Giữa kỳ vào ngày 26/10/2026 lúc 07:30 tại B4.\nMôn OOP: giao Dự án vào ngày 20/10/2026 lúc 08:00.\n"
+  },
+  "tasks": [
+    {
+      "course": "OOP",
+      "date_text": "24/10/2026 lúc 23:59",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "nộp Báo cáo vào ngày 24/10/2026 lúc 23:59 trên LMS",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "submission",
+      "location": "LMS",
+      "missing_fields": [],
+      "normalized": {
+        "day": 24,
+        "hour": 23,
+        "local_date": "2026-10-24",
+        "minute": 59,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Báo cáo",
+      "validity": "invalid"
+    },
+    {
+      "course": "Mạng máy tính",
+      "date_text": "28/10/2026 lúc 17:00",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "nộp Bài lab vào ngày 28/10/2026 lúc 17:00 tại Lab 2",
+      "issues": [
+        {
+          "code": "ungrounded_field",
+          "field": "course",
+          "message": "Value is not an exact substring of item evidence"
+        }
+      ],
+      "kind": "submission",
+      "location": "Lab 2",
+      "missing_fields": [],
+      "normalized": {
+        "day": 28,
+        "hour": 17,
+        "local_date": "2026-10-28",
+        "minute": 0,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": 2026,
+        "year_origin": "source"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/source/assets/task017/live_syllabus.txt",
+      "title": "Bài lab",
+      "validity": "invalid"
+    }
+  ]
+}

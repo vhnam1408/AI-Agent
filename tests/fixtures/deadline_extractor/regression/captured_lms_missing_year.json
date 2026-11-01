@@ -1,0 +1,238 @@
+{
+  "all_items_valid": false,
+  "default_timezone": "Asia/Ho_Chi_Minh",
+  "items": [
+    {
+      "course": "Lập trình Hướng đối tượng OOP",
+      "date_text": "Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "submission",
+      "location": null,
+      "missing_fields": [
+        "year"
+      ],
+      "normalized": {
+        "day": 24,
+        "hour": 23,
+        "local_date": null,
+        "minute": 59,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 5,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "Báo cáo bài tập lớn",
+      "validity": "needs_review"
+    },
+    {
+      "course": "Mạng máy tính",
+      "date_text": "Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "exam",
+      "location": "B4 tòa H",
+      "missing_fields": [
+        "year"
+      ],
+      "normalized": {
+        "day": 26,
+        "hour": 7,
+        "local_date": null,
+        "minute": 30,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 7,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "Giữa kỳ",
+      "validity": "needs_review"
+    },
+    {
+      "course": "Cấu trúc dữ liệu và giải thuật",
+      "date_text": "Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "submission",
+      "location": "Lab 2",
+      "missing_fields": [
+        "year"
+      ],
+      "normalized": {
+        "day": 28,
+        "hour": 17,
+        "local_date": null,
+        "minute": 0,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 2,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "bài tập thực hành",
+      "validity": "needs_review"
+    },
+    {
+      "course": "Kiến trúc máy tính",
+      "date_text": "Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "exam",
+      "location": "C102",
+      "missing_fields": [
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": 30,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": 10,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 4,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "kiểm tra vấn đáp",
+      "validity": "needs_review"
+    }
+  ],
+  "ok": true,
+  "raw_model_content": "{\"items\":[{\"kind\":\"submission\",\"course\":\"Lập trình Hướng đối tượng OOP\",\"title\":\"Báo cáo bài tập lớn\",\"date_text\":\"Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\",\"location\":null,\"evidence\":\"1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\"},{\"kind\":\"exam\",\"course\":\"Mạng máy tính\",\"title\":\"Giữa kỳ\",\"date_text\":\"Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\",\"location\":\"B4 tòa H\",\"evidence\":\"2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\"},{\"kind\":\"submission\",\"course\":\"Cấu trúc dữ liệu và giải thuật\",\"title\":\"bài tập thực hành\",\"date_text\":\"Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\",\"location\":\"Lab 2\",\"evidence\":\"3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\"},{\"kind\":\"exam\",\"course\":\"Kiến trúc máy tính\",\"title\":\"kiểm tra vấn đáp\",\"date_text\":\"Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\",\"location\":\"C102\",\"evidence\":\"4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\"}]}",
+  "reference_year": null,
+  "response_metadata": {
+    "http_status": 200,
+    "latency_ms": 72899,
+    "model_used": "qwen3.8:27b",
+    "truncated": false
+  },
+  "source": {
+    "id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+    "image_count": 0,
+    "text": "Kế hoạch học tập và deadline học kỳ này:\r\n1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\r\n2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\r\n3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\r\n4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\r\n"
+  },
+  "tasks": [
+    {
+      "course": "Lập trình Hướng đối tượng OOP",
+      "date_text": "Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "submission",
+      "location": null,
+      "missing_fields": [
+        "year"
+      ],
+      "normalized": {
+        "day": 24,
+        "hour": 23,
+        "local_date": null,
+        "minute": 59,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 5,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "Báo cáo bài tập lớn",
+      "validity": "needs_review"
+    },
+    {
+      "course": "Cấu trúc dữ liệu và giải thuật",
+      "date_text": "Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "issues": [
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "submission",
+      "location": "Lab 2",
+      "missing_fields": [
+        "year"
+      ],
+      "normalized": {
+        "day": 28,
+        "hour": 17,
+        "local_date": null,
+        "minute": 0,
+        "month": 10,
+        "second": 0,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": 2,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T145552Z/source/assets/input.txt",
+      "title": "bài tập thực hành",
+      "validity": "needs_review"
+    }
+  ]
+}

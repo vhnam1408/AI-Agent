@@ -1,0 +1,489 @@
+{
+  "ok": true,
+  "source": {
+    "id": "synthetic-vision",
+    "text": "",
+    "image_count": 1
+  },
+  "items": [
+    {
+      "kind": "class",
+      "course": "XÁC SUẤT THỐNG KÊ",
+      "title": "LT",
+      "location": "F203 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 2\n[LT] XÁC SUẤT THỐNG KÊ\nPhòng: F203 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 1,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "XÁC SUẤT THỐNG KÊ",
+      "title": "TH",
+      "location": "PM_B4-2_5.3 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 2\n[TH] XÁC SUẤT THỐNG KÊ\nPhòng: PM_B4-2_5.3 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 1,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "title": "LT",
+      "location": "E203 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 3\n[LT] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\nPhòng: E203 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 2,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "MẠNG MÁY TÍNH",
+      "title": "LT",
+      "location": "E206 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 3\n[LT] MẠNG MÁY TÍNH\nPhòng: E206 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 2,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "TOÁN TỔ HỢP",
+      "title": "LT",
+      "location": "F203 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 4\n[LT] TOÁN TỔ HỢP\nPhòng: F203 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 3,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "title": "TH",
+      "location": "PM_D202 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 4\n[TH] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\nPhòng: PM_D202 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 3,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "TOÁN TỔ HỢP",
+      "title": "TH",
+      "location": "PM_D202 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 4\n[TH] TOÁN TỔ HỢP\nPhòng: PM_D202 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 3,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "VẬT LÝ ĐẠI CƯƠNG 2",
+      "title": "LT",
+      "location": "E107 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 7\n[LT] VẬT LÝ ĐẠI CƯƠNG 2\nPhòng: E107 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 6,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "class",
+      "course": "CON NGƯỜI VÀ MÔI TRƯỜNG",
+      "title": "LT",
+      "location": "F103 (CS2)",
+      "date_text": null,
+      "evidence": "Thứ 7\n[LT] CON NGƯỜI VÀ MÔI TRƯỜNG\nPhòng: F103 (CS2)",
+      "source_id": "synthetic-vision",
+      "normalized": {
+        "year": null,
+        "month": null,
+        "day": null,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 6,
+        "local_date": null,
+        "year_origin": "unresolved",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "needs_review",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Synthetic fixture: image transcript needs review"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Synthetic fixture: not printed"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: not printed"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    }
+  ],
+  "tasks": [],
+  "all_items_valid": false,
+  "reference_year": null,
+  "default_timezone": "Asia/Ho_Chi_Minh",
+  "raw_model_content": "{\"items\": [{\"kind\": \"class\", \"course\": \"XÁC SUẤT THỐNG KÊ\", \"title\": \"LT\", \"location\": \"F203 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 2\\n[LT] XÁC SUẤT THỐNG KÊ\\nPhòng: F203 (CS2)\"}, {\"kind\": \"class\", \"course\": \"XÁC SUẤT THỐNG KÊ\", \"title\": \"TH\", \"location\": \"PM_B4-2_5.3 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 2\\n[TH] XÁC SUẤT THỐNG KÊ\\nPhòng: PM_B4-2_5.3 (CS2)\"}, {\"kind\": \"class\", \"course\": \"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\", \"title\": \"LT\", \"location\": \"E203 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 3\\n[LT] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\\nPhòng: E203 (CS2)\"}, {\"kind\": \"class\", \"course\": \"MẠNG MÁY TÍNH\", \"title\": \"LT\", \"location\": \"E206 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 3\\n[LT] MẠNG MÁY TÍNH\\nPhòng: E206 (CS2)\"}, {\"kind\": \"class\", \"course\": \"TOÁN TỔ HỢP\", \"title\": \"LT\", \"location\": \"F203 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 4\\n[LT] TOÁN TỔ HỢP\\nPhòng: F203 (CS2)\"}, {\"kind\": \"class\", \"course\": \"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\", \"title\": \"TH\", \"location\": \"PM_D202 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 4\\n[TH] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\\nPhòng: PM_D202 (CS2)\"}, {\"kind\": \"class\", \"course\": \"TOÁN TỔ HỢP\", \"title\": \"TH\", \"location\": \"PM_D202 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 4\\n[TH] TOÁN TỔ HỢP\\nPhòng: PM_D202 (CS2)\"}, {\"kind\": \"class\", \"course\": \"VẬT LÝ ĐẠI CƯƠNG 2\", \"title\": \"LT\", \"location\": \"E107 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 7\\n[LT] VẬT LÝ ĐẠI CƯƠNG 2\\nPhòng: E107 (CS2)\"}, {\"kind\": \"class\", \"course\": \"CON NGƯỜI VÀ MÔI TRƯỜNG\", \"title\": \"LT\", \"location\": \"F103 (CS2)\", \"date_text\": null, \"evidence\": \"Thứ 7\\n[LT] CON NGƯỜI VÀ MÔI TRƯỜNG\\nPhòng: F103 (CS2)\"}]}",
+  "response_metadata": {
+    "model_used": "SYNTHETIC_TEST_FIXTURE",
+    "http_status": 200,
+    "latency_ms": 0,
+    "truncated": false
+  }
+}

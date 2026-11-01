@@ -1,0 +1,227 @@
+{
+  "ok": true,
+  "source": {
+    "id": "synthetic-conflict",
+    "text": "Kế hoạch học tập và deadline học kỳ này:\r\n1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\r\n2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\r\n3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\r\n4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\r\n",
+    "image_count": 0
+  },
+  "items": [
+    {
+      "kind": "submission",
+      "course": "Lập trình Hướng đối tượng OOP",
+      "title": "Báo cáo bài tập lớn",
+      "location": "LMS",
+      "date_text": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "evidence": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 24,
+        "hour": 23,
+        "minute": 59,
+        "second": 0,
+        "weekday": 5,
+        "local_date": "2026-10-24",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "exam",
+      "course": "Mạng máy tính",
+      "title": "Giữa kỳ",
+      "location": "phòng B4 tòa H",
+      "date_text": "2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.",
+      "evidence": "2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 26,
+        "hour": 7,
+        "minute": 30,
+        "second": 0,
+        "weekday": 7,
+        "local_date": "2026-10-26",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "submission",
+      "course": "Cấu trúc dữ liệu và giải thuật",
+      "title": "bài tập thực hành",
+      "location": "phòng Lab 2",
+      "date_text": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "evidence": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 28,
+        "hour": 17,
+        "minute": 0,
+        "second": 0,
+        "weekday": 2,
+        "local_date": "2026-10-28",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "exam",
+      "course": "Kiến trúc máy tính",
+      "title": "kiểm tra vấn đáp",
+      "location": "phòng C102",
+      "date_text": "4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.",
+      "evidence": "4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 30,
+        "hour": null,
+        "minute": null,
+        "second": null,
+        "weekday": 4,
+        "local_date": "2026-10-30",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [
+        "time"
+      ],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Synthetic fixture: no printed clock"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    }
+  ],
+  "tasks": [
+    {
+      "kind": "submission",
+      "course": "Lập trình Hướng đối tượng OOP",
+      "title": "Báo cáo bài tập lớn",
+      "location": "LMS",
+      "date_text": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "evidence": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 24,
+        "hour": 23,
+        "minute": 59,
+        "second": 0,
+        "weekday": 5,
+        "local_date": "2026-10-24",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    },
+    {
+      "kind": "submission",
+      "course": "Cấu trúc dữ liệu và giải thuật",
+      "title": "bài tập thực hành",
+      "location": "phòng Lab 2",
+      "date_text": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "evidence": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "source_id": "synthetic-conflict",
+      "normalized": {
+        "year": 2026,
+        "month": 10,
+        "day": 28,
+        "hour": 17,
+        "minute": 0,
+        "second": 0,
+        "weekday": 2,
+        "local_date": "2026-10-28",
+        "year_origin": "explicit_context",
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420
+      },
+      "validity": "invalid",
+      "missing_fields": [],
+      "issues": [
+        {
+          "code": "weekday_mismatch",
+          "field": "weekday",
+          "message": "Synthetic fixture: printed weekday conflicts with explicit 2026 context"
+        }
+      ],
+      "deadline_utc": null,
+      "event_time_utc": null
+    }
+  ],
+  "all_items_valid": false,
+  "reference_year": 2026,
+  "default_timezone": "Asia/Ho_Chi_Minh",
+  "raw_model_content": "{\"items\": [{\"kind\": \"submission\", \"course\": \"Lập trình Hướng đối tượng OOP\", \"title\": \"Báo cáo bài tập lớn\", \"location\": \"LMS\", \"date_text\": \"1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\", \"evidence\": \"1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.\"}, {\"kind\": \"exam\", \"course\": \"Mạng máy tính\", \"title\": \"Giữa kỳ\", \"location\": \"phòng B4 tòa H\", \"date_text\": \"2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\", \"evidence\": \"2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.\"}, {\"kind\": \"submission\", \"course\": \"Cấu trúc dữ liệu và giải thuật\", \"title\": \"bài tập thực hành\", \"location\": \"phòng Lab 2\", \"date_text\": \"3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\", \"evidence\": \"3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.\"}, {\"kind\": \"exam\", \"course\": \"Kiến trúc máy tính\", \"title\": \"kiểm tra vấn đáp\", \"location\": \"phòng C102\", \"date_text\": \"4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\", \"evidence\": \"4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.\"}]}",
+  "response_metadata": {
+    "model_used": "SYNTHETIC_TEST_FIXTURE",
+    "http_status": 200,
+    "latency_ms": 0,
+    "truncated": false
+  }
+}
