@@ -1,0 +1,9 @@
+{
+  "items": [
+    {"kind":"submission","course":"Lập trình Hướng đối tượng OOP","title_fragment":"Báo cáo bài tập lớn","location_identifier":"LMS","month":10,"day":24,"hour":23,"minute":59,"second":0,"weekday":5},
+    {"kind":"exam","course":"Mạng máy tính","title_fragment":"Giữa kỳ","location_identifier":"B4","month":10,"day":26,"hour":7,"minute":30,"second":0,"weekday":7},
+    {"kind":"submission","course":"Cấu trúc dữ liệu và giải thuật","title_fragment":"bài tập thực hành","location_identifier":"Lab 2","month":10,"day":28,"hour":17,"minute":0,"second":0,"weekday":2},
+    {"kind":"exam","course":"Kiến trúc máy tính","title_fragment":"vấn đáp","location_identifier":"C102","month":10,"day":30,"hour":null,"minute":null,"second":null,"weekday":4}
+  ],
+  "note":"Predefined criteria for repository input.txt. Weekday uses ISO Monday=1..Sunday=7. No inferred year; never send this file to the model."
+}

@@ -1,0 +1,534 @@
+{
+  "all_items_valid": false,
+  "default_timezone": "Asia/Ho_Chi_Minh",
+  "items": [
+    {
+      "course": "XÁC SUẤT THỐNG KÊ",
+      "date_text": "Thứ 2",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] XÁC SUẤT THỐNG KÊ\nPhòng: F203 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: F203 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "XÁC SUẤT THỐNG KÊ",
+      "validity": "invalid"
+    },
+    {
+      "course": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "date_text": "Thứ 3",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\nPhòng: E203 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: E203 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "validity": "invalid"
+    },
+    {
+      "course": "TOÁN TỔ HỢP",
+      "date_text": "Thứ 4",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] TOÁN TỔ HỢP\nPhòng: F203 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: F203 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "TOÁN TỔ HỢP",
+      "validity": "invalid"
+    },
+    {
+      "course": "VẬT LÝ ĐẠI CƯƠNG 2",
+      "date_text": "Thứ 7",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] VẬT LÝ ĐẠI CƯƠNG 2\nPhòng: E107 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: E107 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "VẬT LÝ ĐẠI CƯƠNG 2",
+      "validity": "invalid"
+    },
+    {
+      "course": "XÁC SUẤT THỐNG KÊ",
+      "date_text": "Thứ 2",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ TH ] XÁC SUẤT THỐNG KÊ\nPhòng: PM_B4-2_5.3 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: PM_B4-2_5.3 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "XÁC SUẤT THỐNG KÊ",
+      "validity": "invalid"
+    },
+    {
+      "course": "MẠNG MÁY TÍNH",
+      "date_text": "Thứ 3",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] MẠNG MÁY TÍNH\nPhòng: E206 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: E206 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "MẠNG MÁY TÍNH",
+      "validity": "invalid"
+    },
+    {
+      "course": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "date_text": "Thứ 4",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ TH ] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\nPhòng: PM_D202 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: PM_D202 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG",
+      "validity": "invalid"
+    },
+    {
+      "course": "CON NGƯỜI VÀ MÔI TRƯỜNG",
+      "date_text": "Thứ 7",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ LT ] CON NGƯỜI VÀ MÔI TRƯỜNG\nPhòng: F103 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: F103 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "CON NGƯỜI VÀ MÔI TRƯỜNG",
+      "validity": "invalid"
+    },
+    {
+      "course": "TOÁN TỔ HỢP",
+      "date_text": "Thứ 4",
+      "deadline_utc": null,
+      "event_time_utc": null,
+      "evidence": "[ TH ] TOÁN TỔ HỢP\nPhòng: PM_D202 (CS2)",
+      "issues": [
+        {
+          "code": "unverified_visual_evidence",
+          "field": "evidence",
+          "message": "Image transcription requires visual verification"
+        },
+        {
+          "code": "ungrounded_field",
+          "field": "date_text",
+          "message": "Value is not an exact substring of item evidence"
+        },
+        {
+          "code": "missing_field",
+          "field": "date",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "year",
+          "message": "Source does not establish this field"
+        },
+        {
+          "code": "missing_field",
+          "field": "time",
+          "message": "Source does not establish this field"
+        }
+      ],
+      "kind": "class",
+      "location": "Phòng: PM_D202 (CS2)",
+      "missing_fields": [
+        "date",
+        "year",
+        "time"
+      ],
+      "normalized": {
+        "day": null,
+        "hour": null,
+        "local_date": null,
+        "minute": null,
+        "month": null,
+        "second": null,
+        "timezone": "Asia/Ho_Chi_Minh",
+        "utc_offset_minutes": 420,
+        "weekday": null,
+        "year": null,
+        "year_origin": "unresolved"
+      },
+      "source_id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+      "title": "TOÁN TỔ HỢP",
+      "validity": "invalid"
+    }
+  ],
+  "ok": true,
+  "raw_model_content": "{\"items\":[{\"kind\":\"class\",\"course\":\"XÁC SUẤT THỐNG KÊ\",\"title\":\"XÁC SUẤT THỐNG KÊ\",\"date_text\":\"Thứ 2\",\"location\":\"Phòng: F203 (CS2)\",\"evidence\":\"[ LT ] XÁC SUẤT THỐNG KÊ\\nPhòng: F203 (CS2)\"},{\"kind\":\"class\",\"course\":\"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\",\"title\":\"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\",\"date_text\":\"Thứ 3\",\"location\":\"Phòng: E203 (CS2)\",\"evidence\":\"[ LT ] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\\nPhòng: E203 (CS2)\"},{\"kind\":\"class\",\"course\":\"TOÁN TỔ HỢP\",\"title\":\"TOÁN TỔ HỢP\",\"date_text\":\"Thứ 4\",\"location\":\"Phòng: F203 (CS2)\",\"evidence\":\"[ LT ] TOÁN TỔ HỢP\\nPhòng: F203 (CS2)\"},{\"kind\":\"class\",\"course\":\"VẬT LÝ ĐẠI CƯƠNG 2\",\"title\":\"VẬT LÝ ĐẠI CƯƠNG 2\",\"date_text\":\"Thứ 7\",\"location\":\"Phòng: E107 (CS2)\",\"evidence\":\"[ LT ] VẬT LÝ ĐẠI CƯƠNG 2\\nPhòng: E107 (CS2)\"},{\"kind\":\"class\",\"course\":\"XÁC SUẤT THỐNG KÊ\",\"title\":\"XÁC SUẤT THỐNG KÊ\",\"date_text\":\"Thứ 2\",\"location\":\"Phòng: PM_B4-2_5.3 (CS2)\",\"evidence\":\"[ TH ] XÁC SUẤT THỐNG KÊ\\nPhòng: PM_B4-2_5.3 (CS2)\"},{\"kind\":\"class\",\"course\":\"MẠNG MÁY TÍNH\",\"title\":\"MẠNG MÁY TÍNH\",\"date_text\":\"Thứ 3\",\"location\":\"Phòng: E206 (CS2)\",\"evidence\":\"[ LT ] MẠNG MÁY TÍNH\\nPhòng: E206 (CS2)\"},{\"kind\":\"class\",\"course\":\"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\",\"title\":\"PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\",\"date_text\":\"Thứ 4\",\"location\":\"Phòng: PM_D202 (CS2)\",\"evidence\":\"[ TH ] PP LẬP TRÌNH HƯỚNG ĐỐI TƯỢNG\\nPhòng: PM_D202 (CS2)\"},{\"kind\":\"class\",\"course\":\"CON NGƯỜI VÀ MÔI TRƯỜNG\",\"title\":\"CON NGƯỜI VÀ MÔI TRƯỜNG\",\"date_text\":\"Thứ 7\",\"location\":\"Phòng: F103 (CS2)\",\"evidence\":\"[ LT ] CON NGƯỜI VÀ MÔI TRƯỜNG\\nPhòng: F103 (CS2)\"},{\"kind\":\"class\",\"course\":\"TOÁN TỔ HỢP\",\"title\":\"TOÁN TỔ HỢP\",\"date_text\":\"Thứ 4\",\"location\":\"Phòng: PM_D202 (CS2)\",\"evidence\":\"[ TH ] TOÁN TỔ HỢP\\nPhòng: PM_D202 (CS2)\"}]}",
+  "reference_year": null,
+  "response_metadata": {
+    "http_status": 200,
+    "latency_ms": 139787,
+    "model_used": "qwen3.8:27b",
+    "truncated": false
+  },
+  "source": {
+    "id": "/kaggle/working/task017/20261031T142042Z/evidence/timetable_4x.png",
+    "image_count": 1,
+    "text": ""
+  },
+  "tasks": []
+}

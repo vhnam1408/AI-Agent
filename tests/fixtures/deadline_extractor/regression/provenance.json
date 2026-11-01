@@ -1,0 +1,11 @@
+{
+  "captured_from": "task017_evidence_20261031T142042Z.zip",
+  "archive_sha256": "49cb36026b6061e822dff56f42bb31ded766a0adbc04e784c42b86ddd6d411e2",
+  "captured_files": {
+    "captured_text_complete.json": "ed6d50dbe5a22f77c850416f7b62a2f0724a7c8a34327160d3395b7b35366494",
+    "captured_text_missing_year.json": "7aa0f8fa0f3b030231992ffd4bba20be12e5c03713e0e8d666649382f03ce727",
+    "captured_text_weekday_conflict.json": "03ae32e144c8820164bd72d83c78da8997ebcef6c7105a9b2638a133e3b72101",
+    "captured_vision_timetable.json": "1ecb503c6d4a220ad50039f3fb3b29e8af9a3da6fe41dda4c61265b644d30eae"
+  },
+  "synthetic_files_note": "Synthetic fixtures are manually specified validator examples, not real program/model results."
+}

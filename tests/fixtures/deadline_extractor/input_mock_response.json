@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "kind": "submission",
+      "course": "Lập trình Hướng đối tượng OOP",
+      "title": "Báo cáo bài tập lớn",
+      "location": "LMS",
+      "date_text": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS.",
+      "evidence": "1. Thứ 6 tuần này ngày 24/10 nộp Báo cáo bài tập lớn môn Lập trình Hướng đối tượng OOP lúc 23:59 trên hệ thống LMS."
+    },
+    {
+      "kind": "exam",
+      "course": "Mạng máy tính",
+      "title": "Giữa kỳ",
+      "location": "phòng B4 tòa H",
+      "date_text": "2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H.",
+      "evidence": "2. Sáng Chủ nhật ngày 26/10 thi Giữa kỳ môn Mạng máy tính lúc 07:30 tại phòng B4 tòa H."
+    },
+    {
+      "kind": "submission",
+      "course": "Cấu trúc dữ liệu và giải thuật",
+      "title": "bài tập thực hành",
+      "location": "phòng Lab 2",
+      "date_text": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00.",
+      "evidence": "3. Thứ 3 tuần sau ngày 28/10 nộp bài tập thực hành môn Cấu trúc dữ liệu và giải thuật phòng Lab 2 lúc 17:00."
+    },
+    {
+      "kind": "exam",
+      "course": "Kiến trúc máy tính",
+      "title": "kiểm tra vấn đáp",
+      "location": "phòng C102",
+      "date_text": "4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102.",
+      "evidence": "4. Thứ 5 ngày 30/10 kiểm tra vấn đáp môn Kiến trúc máy tính tại phòng C102."
+    }
+  ]
+}
