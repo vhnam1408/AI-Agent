@@ -47,6 +47,25 @@ check_case('accept_synthetic_conflict_with_clocks_retained', lambda: check_repos
 check_case('accept_synthetic_vision_without_deadlines', lambda: check_vision_timetable(
     load('synthetic_vision.json'), vision_expected))
 
+
+# Hai kiểu xuống dòng phải cho cùng kết quả; không sửa bất kỳ fixture lịch sử nào.
+for label, newline in (('lf', '\n'), ('crlf', '\r\n')):
+    check_case('accept_source_newlines_' + label, lambda newline=newline: check_repository_text(
+        load('captured_text_missing_year.json'),
+        sample_text.replace('\r\n', '\n').replace('\n', newline), sample_expected))
+
+
+def reject_changed_source(suffix):
+    """Không nới tiêu chí cho thay chữ hoặc thêm khoảng trắng ngoài CRLF/LF."""
+    data = load('captured_text_missing_year.json')
+    data['source']['text'] += suffix
+    must_reject(lambda: check_repository_text(data, sample_text, sample_expected),
+                'Original source text was changed')
+
+
+check_case('reject_changed_source_content', lambda: reject_changed_source('X'))
+check_case('reject_changed_source_whitespace', lambda: reject_changed_source(' '))
+
 check_case('reject_captured_incomplete_evidence', lambda: must_reject(
     lambda: check_complete_text(load('captured_text_complete.json'), complete_text, complete_expected),
     'course is absent'))

@@ -291,6 +291,16 @@ void read_calendar_date(ExtractedWorkItem& item, const ExtractionRequest& reques
     }
 }
 
+// Dùng chung kiểm miền giờ cho parser và xác nhận; null vẫn là dữ liệu chưa biết.
+void check_clock_range(ExtractedWorkItem& item) {
+    const auto& time = item.when;
+    if ((time.hour && (*time.hour < 0 || *time.hour > 23)) ||
+        (time.minute && (*time.minute < 0 || *time.minute > 59)) ||
+        (time.second && (*time.second < 0 || *time.second > 59))) {
+        add_issue(item, "invalid_time", "time", "Time outside civil clock range", true);
+    }
+}
+
 // Đọc giờ/phút/giây, loại UTC offset khỏi danh sách giờ sự kiện.
 void read_clock_time(ExtractedWorkItem& item) {
     auto& date_time = item.when;
@@ -309,9 +319,7 @@ void read_clock_time(ExtractedWorkItem& item) {
         date_time.hour = time.hour;
         date_time.minute = time.minute;
         date_time.second = time.second;
-        if (time.hour > 23 || time.minute > 59 || time.second > 59) {
-            add_issue(item, "invalid_time", "time", "Time outside civil clock range", true);
-        }
+        check_clock_range(item);
     } else {
         mark_missing_field(item, "time");
     }
@@ -358,6 +366,11 @@ void read_weekday(ExtractedWorkItem& item) {
     }
 }
 
+// Kiểm offset chuẩn hóa; parser và dữ liệu xác nhận cùng dùng giới hạn ±14 giờ.
+bool supported_utc_offset(int offset) {
+    return offset >= -14 * 60 && offset <= 14 * 60;
+}
+
 // Chọn UTC offset rõ trong nguồn hoặc múi giờ mặc định được hỗ trợ.
 void read_timezone(ExtractedWorkItem& item, const ExtractionRequest& request) {
     auto& date_time = item.when;
@@ -371,8 +384,7 @@ void read_timezone(ExtractedWorkItem& item, const ExtractionRequest& request) {
          match_iterator != end; ++match_iterator) {
         int offset_hours = std::stoi((*match_iterator)[2]),
             offset_minutes = std::stoi((*match_iterator)[3]);
-        if (offset_hours > 14 || offset_minutes > 59 ||
-            (offset_hours == 14 && offset_minutes != 0)) {
+        if (offset_minutes > 59 || !supported_utc_offset(offset_hours * 60 + offset_minutes)) {
             add_issue(item, "invalid_timezone", "timezone", "Invalid UTC offset", true);
         } else {
             offsets.insert(((*match_iterator)[1] == "-" ? -1 : 1) *
@@ -436,7 +448,9 @@ void validate_calendar_and_set_time(ExtractedWorkItem& item) {
         std::chrono::year{validation_year},
         std::chrono::month{static_cast<unsigned>(*date_time.month)},
         std::chrono::day{static_cast<unsigned>(*date_time.day)}};
-    if (!date.ok() || validation_year < 2000 || validation_year > 2099) {
+    if (*date_time.month < 1 || *date_time.month > 12 ||
+        *date_time.day < 1 || *date_time.day > 31 ||
+        !date.ok() || validation_year < 2000 || validation_year > 2099) {
         add_issue(item, "invalid_date", "date", "Unsupported year or impossible date", true);
         return;
     }
@@ -712,11 +726,7 @@ void check_work_item_evidence(ExtractedWorkItem& item, const ExtractionSource& s
     }
 }
 
-bool describes_same_work(const ExtractedWorkItem& first, const ExtractedWorkItem& second) {
-    return first.kind == second.kind && first.course && first.title &&
-           first.course == second.course && first.title == second.title;
-}
-
+// So thời điểm đầy đủ bằng UTC; khi thiếu năm vẫn giữ xung đột thành phần đã biết.
 bool has_conflicting_time(const ExtractedWorkItem& first, const ExtractedWorkItem& second) {
     if (first.event_time && second.event_time) {
         return first.event_time != second.event_time;
@@ -724,7 +734,20 @@ bool has_conflicting_time(const ExtractedWorkItem& first, const ExtractedWorkIte
     const auto& first_time = first.when;
     const auto& second_time = second.when;
     if (!first_time.local_date || !second_time.local_date) {
-        return false;
+        // Không bổ sung năm/giờ để so sánh; chỉ hai giá trị tường minh khác nhau mới xung đột.
+        const auto differs = [](const std::optional<int>& a, const std::optional<int>& b) {
+            return a && b && a != b;
+        };
+        // Khi thiếu ngày tuyệt đối, offset khác nhau có thể mô tả cùng thời điểm.
+        // Chưa đủ dữ liệu để kết luận trường hợp đó; giữ NeedsReview thay vì đoán.
+        return first_time.utc_offset_minutes && second_time.utc_offset_minutes &&
+               first_time.utc_offset_minutes == second_time.utc_offset_minutes &&
+               (differs(first_time.year, second_time.year) ||
+                differs(first_time.month, second_time.month) ||
+                differs(first_time.day, second_time.day) ||
+                differs(first_time.hour, second_time.hour) ||
+                differs(first_time.minute, second_time.minute) ||
+                differs(first_time.second, second_time.second));
     }
     if (first_time.local_date != second_time.local_date) {
         return true;
@@ -740,13 +763,14 @@ bool has_conflicting_time(const ExtractedWorkItem& first, const ExtractedWorkIte
            first_time.second != second_time.second;
 }
 
+// Dùng quy tắc nhận diện chung, gắn cờ cả hai occurrence và thu hồi TimePoint khi xung đột.
 void mark_conflicting_items(std::vector<ExtractedWorkItem>& items) {
     for (std::size_t first_index = 0; first_index < items.size(); ++first_index) {
         for (std::size_t second_index = first_index + 1; second_index < items.size();
              ++second_index) {
             auto& first = items[first_index];
             auto& second = items[second_index];
-            if (!describes_same_work(first, second) || !has_conflicting_time(first, second)) {
+            if (!DeadlineExtractor::same_event(first, second) || !has_conflicting_time(first, second)) {
                 continue;
             }
 
@@ -838,6 +862,40 @@ std::string extraction_error_name(ExtractionErrorCode code) {
     return "Unknown";
 }
 } // namespace
+
+// Giữ quy tắc nhận diện công việc TASK-017, chia sẻ cho policy xác nhận nhiều occurrence.
+bool DeadlineExtractor::same_event(const ExtractedWorkItem& first, const ExtractedWorkItem& second) {
+    return first.kind == second.kind && first.course && first.title &&
+           first.course == second.course && first.title == second.title;
+}
+
+// Kiểm dữ liệu xác nhận có cấu trúc; không dùng local_date/year_origin do bên gọi gửi.
+// Giây vắng mặt biểu thị độ chính xác đến phút như TASK-017; giờ/phút luôn bắt buộc.
+ExtractedWorkItem DeadlineExtractor::validate_date_time(const ExtractedLocalDateTime& when) {
+    ExtractedWorkItem item;
+    item.when = when;
+    item.when.local_date.reset();
+    if (!when.year) {
+        mark_missing_field(item, "year");
+    }
+    if (!when.month || !when.day) {
+        mark_missing_field(item, "date");
+    }
+    if (!when.hour || !when.minute) {
+        mark_missing_field(item, "time");
+    }
+    check_clock_range(item);
+    if (when.weekday && (*when.weekday < 1 || *when.weekday > 7)) {
+        add_issue(item, "invalid_weekday", "weekday", "ISO weekday must be 1..7", true);
+    }
+    if (!when.utc_offset_minutes) {
+        mark_missing_field(item, "timezone");
+    } else if (!supported_utc_offset(*when.utc_offset_minutes)) {
+        add_issue(item, "invalid_timezone", "timezone", "Invalid UTC offset", true);
+    }
+    validate_calendar_and_set_time(item);
+    return item;
+}
 
 // Gọi interface Client; parse và kiểm dữ liệu được tách sang parse_response.
 DeadlineExtractionResult DeadlineExtractor::extract(const ExtractionRequest& request) {

@@ -3,7 +3,7 @@ from collections import Counter
 import json
 import unicodedata
 
-CRITERIA_VERSION = 'task017-retention-v2'
+CRITERIA_VERSION = 'task017-retention-v3-newlines'
 MODEL_FIELDS = ('kind', 'course', 'title', 'date_text', 'location', 'evidence')
 
 
@@ -17,6 +17,11 @@ def normalized_text(value):
     if isinstance(value, str):
         return ' '.join(unicodedata.normalize('NFC', value).split())
     return value
+
+
+def normalized_newlines(value):
+    """Chỉ coi CRLF và LF tương đương; giữ nguyên chữ, dấu, khoảng trắng và nguồn gốc."""
+    return value.replace('\r\n', '\n')
 
 
 def read_raw_items(content):
@@ -45,11 +50,14 @@ def check_common_result(data):
 
 def check_text_evidence(data, source_text):
     """Một item không được mượn tên môn từ dòng khác mà thiếu bằng chứng."""
-    require(data['source']['text'] == source_text, 'Original source text was changed')
+    source_text = normalized_newlines(source_text)
+    require(normalized_newlines(data['source']['text']) == source_text,
+            'Original source text was changed')
     require(data['source']['image_count'] == 0, 'Unexpected image input')
     for item in data['items']:
         evidence = item['evidence']
-        require(evidence and evidence in source_text, 'Evidence is not an original quotation')
+        require(evidence and normalized_newlines(evidence) in source_text,
+                'Evidence is not an original quotation')
         for field in ('course', 'title', 'date_text', 'location'):
             value = item[field]
             if value is not None:
