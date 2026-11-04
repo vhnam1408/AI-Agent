@@ -103,6 +103,14 @@ public:
     [[nodiscard]] static DeadlineExtractionResult parse_response(std::string_view content,
                                                                  const ExtractionRequest& request);
 
+    // Kiểm thành phần ngày giờ tường minh bằng validator TASK-017; không đọc nguồn/LLM.
+    // Trả item Other chỉ có event_time khi đủ dữ liệu; không tự cấp deadline/năm/giờ.
+    [[nodiscard]] static ExtractedWorkItem validate_date_time(const ExtractedLocalDateTime& when);
+
+    // Dùng cùng quy tắc TASK-017 để nhận diện cùng công việc; không tự tạo TaskId.
+    [[nodiscard]] static bool same_event(const ExtractedWorkItem& first,
+                                         const ExtractedWorkItem& second);
+
 private:
     LLMClient& client_;
 };
