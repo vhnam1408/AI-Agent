@@ -23,6 +23,14 @@ bool DependencyDAG::addDependency(std::string_view prerequisiteId,
     for (const auto& existing : dependents) {
         if (existing == dependent) return false;
     }
+    // Chặn chu trình 2 đỉnh trực tiếp (mutual dependency: A -> B và B -> A)
+    const auto itRev = edges_.find(dependent);
+    if (itRev != edges_.end()) {
+        const std::string prereq(prerequisiteId);
+        for (const auto& dep : itRev->second) {
+            if (dep == prereq) return false;
+        }
+    }
     dependents.push_back(dependent);
     return true;
 }
