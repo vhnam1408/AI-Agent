@@ -58,7 +58,7 @@ có thể thay đổi một bước mà vẫn dùng thứ tự chạy chung. Tro
 chỉ ghi đè `parseDecision()` để đọc dữ liệu giả. Đây là ví dụ dễ trình bày.
 
 Vòng lặp chuyển từ code cũ sang `.cpp` là cơ sở cho TASK-25. Phần hoàn thiện
-ngày 05/11/2026, parser JSON, trạng thái kết thúc và notebook được mô tả tại
+ngày 05/11/2026, parser JSON và trạng thái kết thúc được mô tả tại
 [TASK-025.md](TASK-025.md). Tài liệu này giữ phần giải thích nguồn gốc TASK-05.
 
 ## 5. Thống nhất với Tool — TASK-06

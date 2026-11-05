@@ -5,9 +5,9 @@ Cập nhật: **05/11/2026**. Source nền trước thay đổi: `8d8a7a0`.
 **Đã triển khai và kiểm thử TASK-025 theo phạm vi bảng phân công:** hiện thực
 `AgentLoop::run()` theo Template Method, quản lý history và dừng ở `max_steps`.
 Build local thành công; root CTest **10/10 PASS**, trong đó bộ TASK-025 có
-**26 ca unit/mock PASS** và **7 nhóm HTTP/CLI PASS**. Notebook Kaggle đã được
-chuẩn bị để người dùng chạy; chưa có kết quả Kaggle hoặc inference model thật
-từ lần triển khai này. Chưa commit/push và chưa tự xác nhận nghiệm thu của nhóm.
+**26 ca unit/mock PASS** và **7 nhóm HTTP/CLI PASS**. Các test dùng AgentLoop,
+parser và Registry thật, với LLM hoặc server HTTP giả. Kết quả này kiểm chứng
+vòng Agent, không phải phép đo độ chính xác của model.
 
 ## 1. Giải thích kết quả đầu ra của task
 
@@ -49,7 +49,6 @@ từ chối trước khi chạy bất kỳ tool nào.
 | `history()` | Truy cập read-only lịch sử của lượt vừa chạy để kiểm tra và trình bày. |
 | `StepEvent` qua `StepHook` | Quan sát từng bước, kết quả tool, thời gian, lỗi, trạng thái cuối và phản hồi model. |
 | JSON của CLI `--agent` | Lưu result, events, history và metadata model để đối chiếu. |
-| Notebook Kaggle tự chứa source | Khôi phục source, build, chạy test, chuẩn bị Ollama và chạy demo Agent. |
 
 `tool_calls` đếm số lần Agent gọi `act()`, kể cả khi Registry từ chối. Muốn biết
 tool thực sự thành công phải kiểm tra `event.tool_result.success`.
@@ -64,7 +63,6 @@ tool thực sự thành công phải kiểm tra `event.tool_result.success`.
 | Chưa có demo Agent thật từ CLI | Thêm `ai_agent --agent`, nối OllamaClient, Registry và CalculatorTool. |
 | Test cũ ghi đè parser bằng dữ liệu giả | Test mới dùng AgentLoop/parser thật, chỉ giả LLM hoặc server HTTP. |
 | Hook Harness giữ reference cục bộ sau `runTask()` | Có guard gỡ hook khi thoát, kể cả khi có exception. |
-| Chưa có notebook riêng TASK-025 | Có notebook nhúng source, manifest SHA-256, log và báo cáo rõ mock/live. |
 
 ### 1.4. Trạng thái kết thúc
 
@@ -111,7 +109,7 @@ ollama_http, task13_parser và task13_client_transport.
 
 Các báo cáo local nằm trong `build/task025-mingw/`, là output build không theo
 dõi trong Git. Bộ TASK-017/021 có build riêng; kết quả của chúng không được
-ngầm tính vào 10 nhóm root CTest. Notebook có tùy chọn chạy thêm bộ đó trên Kaggle.
+ngầm tính vào 10 nhóm root CTest.
 
 Đoạn giới thiệu khi báo cáo:
 
@@ -119,8 +117,7 @@ ngầm tính vào 10 nhóm root CTest. Notebook có tùy chọn chạy thêm b�
 > model để chọn một hành động, thực thi công cụ qua Registry rồi đưa kết quả
 > vào lịch sử cho bước tiếp theo. Vòng chạy có giới hạn số bước, kiểm tra lặp
 > và trạng thái kết thúc rõ ràng. Phần triển khai dùng lại parser TASK-013 và
-> giữ hook để Harness theo dõi. Em đã kiểm chứng bằng mock và HTTP integration;
-> notebook Kaggle được chuẩn bị để chạy thêm với model thật.
+> giữ hook để Harness theo dõi. Em đã kiểm chứng bằng mock và HTTP integration.
 
 ## 2. Vai trò của file và các hàm liên quan
 
@@ -197,23 +194,13 @@ là giả dù CLI vẫn dùng cùng HTTP Client; báo cáo test ngoài ghi rõ `
 `task13_parser` vẫn là target riêng phục vụ các kiểm thử độc lập TASK-013.
 Không sửa implementation của Registry, CalculatorTool hoặc Client dùng chung.
 
-### 2.4. Các file kiểm thử và notebook
+### 2.4. Các file kiểm thử
 
 | File | Vai trò và hàm chính |
 |---|---|
 | [tests/task025/agent_loop_test.cpp](../tests/task025/agent_loop_test.cpp) | ScriptedClient giả phản hồi; DummyTool giả thành công/lỗi; Fixture thiết lập dependency; main chạy 26 ca và xuất JSON. Dùng parser thật, không ghi đè parser. |
 | [tests/task025/agent_http_test.py](../tests/task025/agent_http_test.py) | Handler giả endpoint Ollama; main gọi executable thật để kiểm history HTTP, Calculator, budget, loop, JSON lỗi, HTTP lỗi, phục hồi và CLI validation. |
 | [tests/agent_contract_test.cpp](../tests/agent_contract_test.cpp) | Giữ test giao diện cũ để kiểm tương thích lớp con và hook. |
-| [tests/task025/kaggle_runner.py](../tests/task025/kaggle_runner.py) | Session quản lý stage, command/log, toolchain, build/test, Ollama, live và evidence ZIP. |
-| [tests/task025/make_notebook.py](../tests/task025/make_notebook.py) | Đóng gói source chọn lọc, manifest từng file, patch và ZIP hash; tạo notebook với output rỗng. |
-| [tests/task025/validate_notebook.py](../tests/task025/validate_notebook.py) | Kiểm cú pháp cell, output rỗng, hash và source nhúng khớp working tree; kiểm evidence khi một stage lỗi và khi bỏ qua live. |
-| [notebooks/TASK025_AgentLoop_Kaggle.ipynb](../notebooks/TASK025_AgentLoop_Kaggle.ipynb) | Artifact để import trực tiếp vào Kaggle; source nhúng không cần push/clone. |
-
-`Session.stage()` lưu PASS/FAIL và vẫn xuất evidence khi một bước lỗi.
-`Session.command()` giữ stdout/stderr và exit code. `build_and_test()` chặn dùng
-binary nếu build thất bại, kiểm test inventory và đọc báo cáo TASK-025.
-`setup_ollama()` giữ đúng tag model; `live()` chỉ PASS khi có kết quả tool thật
-và đáp án đúng. `archive()` lưu manifest, patch, log và report.
 
 ## 3. Nguyên lý hoạt động và mối liên hệ giữa các file, các task
 
@@ -329,24 +316,6 @@ Các ranh giới phải giữ khi ghép:
   lý Task, Trajectory lưu hành trình. Chúng có vòng đời và mục đích riêng.
 - JSON CLI giữ đầy đủ StepEvent để đối chiếu. Harness hiện ánh xạ một phần field
   sang Step; TASK-28 có thể bổ sung observation, lỗi và thông báo lặp theo schema chung.
-
-### 3.5. Chạy notebook Kaggle
-
-1. Import [TASK025_AgentLoop_Kaggle.ipynb](../notebooks/TASK025_AgentLoop_Kaggle.ipynb)
-   vào Kaggle, bật Internet; chọn GPU phù hợp nếu chạy model lớn.
-2. Sửa LIVE_MODEL thành tag muốn dùng. RUN_LIVE=True chạy cả model thật;
-   RUN_LIVE=False vẫn build/test nhưng live được ghi NOT_RUN.
-3. Chạy các cell theo thứ tự: khôi phục source → toolchain → build/test →
-   Ollama → live Agent → tải evidence.
-4. Đọc report.json. core=PASS là build và root tests; live_agent=PASS chỉ có
-   khi demo model thực sự gọi CalculatorTool và trả đúng 4014 trong budget.
-5. Nếu lỗi, giữ nguyên ZIP để đối chiếu raw events/log; không thay output để
-   biến lần chạy sai thành PASS. Model không được đổi tự động khi lỗi.
-
-Notebook nhúng snapshot working tree với base commit để tham chiếu, không phải
-một commit mới đã push. Mỗi lần chạy tạo thư mục riêng và kiểm SHA-256 từng file.
-Khi sửa source, chạy lại `python tests/task025/make_notebook.py` để đóng gói
-notebook mới; notebook cũ giữ nguyên snapshot cũ.
 
 Tài liệu nền: [Agent contract TASK-05](agent_contract.md),
 [TASK-013](TASK013_IMPLEMENTATION.md), [TASK-017](TASK-017.md),
