@@ -57,8 +57,9 @@ onFinished()
 có thể thay đổi một bước mà vẫn dùng thứ tự chạy chung. Trong test, `DemoAgent`
 chỉ ghi đè `parseDecision()` để đọc dữ liệu giả. Đây là ví dụ dễ trình bày.
 
-Vòng lặp chuyển từ code cũ sang `.cpp` để dự án vẫn chạy được. Nó là cơ sở cho
-TASK-25, chưa phải bằng chứng hoàn thành toàn bộ ReAct và parser JSON.
+Vòng lặp chuyển từ code cũ sang `.cpp` là cơ sở cho TASK-25. Phần hoàn thiện
+ngày 05/11/2026, parser JSON và trạng thái kết thúc được mô tả tại
+[TASK-025.md](TASK-025.md). Tài liệu này giữ phần giải thích nguồn gốc TASK-05.
 
 ## 5. Thống nhất với Tool — TASK-06
 
@@ -116,9 +117,10 @@ lời gọi callback; Harness muốn lưu thì copy sang cấu trúc trajectory 
 
 - TASK-09: thống nhất việc dùng `std::expected` với API Client hiện có; lần này
   không đổi kiểu trả về Client vì sẽ ảnh hưởng TASK-01.
-- TASK-13: parser JSON thực tế và multimodal. Parser mặc định hiện vẫn đọc
-  `Action:` và dùng arguments `"{}"`; chưa tự đọc lệnh JSON từ model.
-- TASK-25: hoàn thiện ReAct, lịch sử, trạng thái kết thúc và tích hợp thật.
+- TASK-13: cung cấp parser JSON và multimodal. TASK-25 hiện tái sử dụng parser
+  này cho JSON trong content; không còn dùng `Action:` với arguments `"{}"`.
+- TASK-25: đã hoàn thiện vòng chạy/history/max_steps và CLI demo với Calculator;
+  luồng MVP đề cương → lịch học thuộc TASK-29.
 - TASK-33: hoàn thiện thuật toán Generic Repeat/Ping-Pong và các trường hợp biên.
 
 LoopDetector vẫn giữ thuật toán cũ; không tuyên bố đã hoàn thiện TASK-33.

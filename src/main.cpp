@@ -2,6 +2,7 @@
 #include "client/ollama_client.h"
 #include "agent/loop_detector.h"
 #include "agent/agent_loop.h"
+#include "agent/agent_cli.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -64,6 +65,7 @@ double read_number(const std::string& text) {
 
 void print_usage() {
     std::cout << "Cach chay:\n"
+              << "  ai_agent --agent --model TEN_MODEL --goal \"Tinh 15 + 17 bang calculator\"\n"
               << "  ai_agent.exe   (nhap cau hinh va cau hoi truc tiep)\n"
               << "  ai_agent --model TEN_MODEL --text assets/chat_prompt.txt\n"
               << "  ai_agent --model TEN_MODEL_VISION --image assets/timetable.png\n"
@@ -92,6 +94,9 @@ std::string ask(const std::string& label, const std::string& default_value = "")
 }
 
 int run_application(int argc, char* argv[]) {
+    if (argc > 1 && std::string_view(argv[1]) == "--agent") {
+        return run_agent_application(argc, argv);
+    }
     try {
     // ── TASK-05: Milestone G1 Architecture Freeze Verification ────────────────
     std::cout << console::MAGENTA << "\n[TASK-05 G1 Freeze] Khởi tạo LoopDetector & AgentLoop interfaces..." << console::RESET << "\n";
