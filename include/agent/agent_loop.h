@@ -30,6 +30,21 @@ struct FinalAnswerAction {
 // Mỗi quyết định là một trong hai loại: gọi Tool hoặc trả lời cuối cùng.
 using AgentDecision = std::variant<ToolCallAction, FinalAnswerAction>;
 
+// Kết quả có kiểu để CLI/Harness không đoán từ nội dung đáp án.
+enum class AgentStatus {
+    NotStarted, Running, Completed, MaxStepsReached, LoopDetected,
+    LLMError, InvalidDecision
+};
+[[nodiscard]] std::string_view to_string(AgentStatus status) noexcept;
+
+struct AgentRunResult {
+    AgentStatus status = AgentStatus::NotStarted;
+    std::string answer;
+    int steps = 0;
+    int tool_calls = 0;
+    [[nodiscard]] bool success() const noexcept { return status == AgentStatus::Completed; }
+};
+
 // Gửi sau mỗi bước, kể cả bước gặp lỗi hoặc bị dừng do lặp.
 // observation là đầu vào của bước; tool_result là kết quả sau khi gọi Tool.
 struct StepEvent {
@@ -42,6 +57,8 @@ struct StepEvent {
     std::string loop_message;
     std::optional<ToolResult> tool_result; // Rỗng nếu chưa gọi Tool.
     std::string error_message;            // Lỗi khiến Agent phải dừng.
+    std::optional<AgentStatus> terminal_status;
+    std::optional<LLMResponse> model_response; // Giữ content và metadata để đối chiếu.
 };
 
 // Harness nhận sự kiện qua hàm này; Agent không include file Harness.
@@ -64,6 +81,9 @@ public:
     // Lớp con thay đổi từng bước bên dưới, không ghi đè run().
     std::string run(std::string_view user_goal);
 
+    [[nodiscard]] const AgentRunResult& lastResult() const noexcept { return last_result_; }
+    [[nodiscard]] const std::vector<ChatMessage>& history() const noexcept { return history_; }
+
 protected:
     virtual void onStart(std::string_view user_goal);
     virtual std::string observe(const std::string& input);
@@ -72,7 +92,7 @@ protected:
     virtual bool isTerminal(const AgentDecision& decision, int current_step);
     virtual void onFinished(const std::string& final_answer);
 
-    // Parser văn bản cũ để tương thích. Parser JSON đầy đủ thuộc TASK-13.
+    // Dùng parser TASK-013; mỗi bước chỉ cho phép một tool call.
     virtual AgentDecision parseDecision(const std::string& raw_text);
 
     std::shared_ptr<LLMClient> llm_client_;
@@ -84,6 +104,10 @@ protected:
 
 private:
     std::string llm_error_message_;
+    AgentStatus failure_status_ = AgentStatus::LLMError;
+    AgentRunResult last_result_;
+    std::optional<LLMResponse> model_response_;
+    std::string finish(AgentStatus status, std::string answer);
     void reportStep(StepEvent& event, std::chrono::steady_clock::time_point started_at);
 };
 

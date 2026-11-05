@@ -97,6 +97,12 @@ public:
             trajectory.addStep(std::move(s));
         });
 
+        // Hook giữ reference tới trajectory cục bộ: gỡ cả khi có exception.
+        struct HookReset {
+            AgentLoop& agent;
+            ~HookReset() { agent.setStepHook({}); }
+        } hookReset{agent};
+
         // 1. Thiết lập môi trường thi
         environment_->setup();
 
@@ -111,8 +117,7 @@ public:
         // 3. Hoàn tất dữ liệu Trajectory
         trajectory.setTotalTimeMs(duration);
         trajectory.setFinalAnswer(finalAnswer);
-        const bool agentSucceeded = !finalAnswer.starts_with("Loi") &&
-                                    !finalAnswer.starts_with("Dung do lap");
+        const bool agentSucceeded = agent.lastResult().success();
         trajectory.setSuccess(agentSucceeded);
         if (!agentSucceeded) {
             trajectory.setErrorMessage(finalAnswer);

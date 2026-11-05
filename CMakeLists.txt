@@ -66,6 +66,7 @@ endif()
 add_library(agent_core STATIC
     src/agent/agent_loop.cpp
     src/agent/tool_registry.cpp
+    src/client/tool_parser.cpp
 )
 target_include_directories(agent_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -84,6 +85,8 @@ target_include_directories(scheduler_core PUBLIC
 
 add_executable(ai_agent
     src/main.cpp
+    src/agent/agent_cli.cpp
+    src/tools/calculator_tool.cpp
     src/client/ollama_client.cpp
 )
 
@@ -129,6 +132,14 @@ if(BUILD_TESTING)
     target_link_libraries(agent_contract_test PRIVATE agent_core)
     add_test(NAME agent_contract COMMAND agent_contract_test)
 
+    # TASK-025: kiểm vòng lặp thật với parser JSON thật và dependency giả.
+    add_executable(task025_test tests/task025/agent_loop_test.cpp src/harness/trajectory.cpp)
+    target_link_libraries(task025_test PRIVATE agent_core scheduler_core)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_libraries(task025_test PRIVATE stdc++exp)
+    endif()
+    add_test(NAME task025_unit COMMAND task025_test "${CMAKE_BINARY_DIR}/task025_unit_results.json")
+
     add_executable(scheduler_test tests/scheduler_test.cpp)
     target_link_libraries(scheduler_test PRIVATE scheduler_core)
     add_test(NAME scheduler COMMAND scheduler_test)
@@ -164,6 +175,10 @@ if(BUILD_TESTING)
 
     find_package(Python3 COMPONENTS Interpreter QUIET)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME task025_http COMMAND ${Python3_EXECUTABLE}
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/task025/agent_http_test.py"
+            $<TARGET_FILE:ai_agent> "${CMAKE_BINARY_DIR}/task025_http_results.json")
+        set_tests_properties(task025_http PROPERTIES TIMEOUT 90)
         add_test(NAME ollama_http
             COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/tests/ollama_http_test.py
