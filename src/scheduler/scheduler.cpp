@@ -1,4 +1,5 @@
 #include "scheduler/scheduler.h"
+#include "tools/dependency_dag.h"
 
 #include <algorithm>
 #include <array>
@@ -114,8 +115,14 @@ SchedulingResult Scheduler::createProposal(
     std::unordered_map<TaskId, int> minutesNeeded;
     std::unordered_set<TaskId> satisfied;
     std::vector<const Task*> pending;
+    const auto orderedTasks = topologicalOrder(request.tasks, reasons);
+    if (!reasons.empty() || orderedTasks.size() != request.tasks.size()) {
+        return makeFailure(SchedulingStatus::Infeasible,
+                           request.currentSchedule, std::move(reasons));
+    }
 
-    for (const Task& task : request.tasks) {
+    for (const Task* taskPtr : orderedTasks) {
+        const Task& task = *taskPtr;
         if (task.status == TaskStatus::Done) {
             satisfied.insert(task.id);
             continue;
@@ -380,25 +387,29 @@ std::vector<const Task*> Scheduler::topologicalOrder(
     std::span<const Task> tasks,
     std::vector<std::string>& reasons
 ) const {
+    // TASK-19: dùng đồ thị chung của TASK-18, không tạo danh sách cạnh riêng.
+    DependencyDAG graph;
     std::unordered_map<TaskId, const Task*> byId;
     std::unordered_map<TaskId, int> indegree;
-    std::unordered_map<TaskId, std::vector<TaskId>> dependents;
 
     for (const Task& task : tasks) {
-        byId[task.id] = &task;
-        indegree[task.id] = 0;
+        if (!graph.addTask(task.id)) {
+            reasons.push_back("Invalid or duplicate task ID: " + task.id);
+            return {};
+        }
+        byId.emplace(task.id, &task);
+        indegree.emplace(task.id, 0);
     }
     for (const Task& task : tasks) {
         for (const TaskId& dependencyId : task.dependencies) {
-            if (!byId.contains(dependencyId)) {
+            if (!graph.addDependency(dependencyId, task.id)) {
                 reasons.push_back(
-                    "Missing dependency " + dependencyId
+                    "Invalid dependency " + dependencyId
                     + " for task " + task.id
                 );
-                continue;
+                return {};
             }
             ++indegree[task.id];
-            dependents[dependencyId].push_back(task.id);
         }
     }
 
@@ -414,7 +425,7 @@ std::vector<const Task*> Scheduler::topologicalOrder(
         const TaskId taskId = queue.front();
         queue.pop_front();
         order.push_back(byId.at(taskId));
-        for (const TaskId& dependentId : dependents[taskId]) {
+        for (const std::string& dependentId : graph.dependentsOf(taskId)) {
             if (--indegree[dependentId] == 0) {
                 queue.push_back(dependentId);
             }

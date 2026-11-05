@@ -78,6 +78,9 @@ add_library(scheduler_core STATIC
     src/scheduler/priority_strategy.cpp
     src/scheduler/constraint_validator.cpp
     src/scheduler/scheduler.cpp
+    src/tools/dependency_dag.cpp
+    src/tools/ScheduleSolverTool.cpp
+    src/tools/ConflictCheckerTool.cpp
 )
 target_include_directories(scheduler_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -143,6 +146,16 @@ if(BUILD_TESTING)
     add_executable(scheduler_test tests/scheduler_test.cpp)
     target_link_libraries(scheduler_test PRIVATE scheduler_core)
     add_test(NAME scheduler COMMAND scheduler_test)
+
+    # TASK-23: Tool 6 và Tool 7 cùng dùng bản lịch xem trước qua Registry.
+    add_executable(schedule_solver_tool_test tests/schedule_solver_tool_test.cpp)
+    target_link_libraries(schedule_solver_tool_test PRIVATE agent_core scheduler_core)
+    add_test(NAME schedule_solver_tool COMMAND schedule_solver_tool_test)
+
+    # TASK-23: kiểm tra lịch hợp lệ, trùng giờ và điểm quá tải.
+    add_executable(conflict_checker_tool_test tests/conflict_checker_tool_test.cpp)
+    target_link_libraries(conflict_checker_tool_test PRIVATE agent_core scheduler_core)
+    add_test(NAME conflict_checker_tool COMMAND conflict_checker_tool_test)
 
     add_executable(trajectory_ics_test
         tests/trajectory_ics_test.cpp

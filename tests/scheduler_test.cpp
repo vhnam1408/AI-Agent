@@ -203,6 +203,24 @@ int main() {
         "dependent task T4 starts before T1 finishes"
     );
 
+    // TASK-19: chu trình A <-> B không thể được xếp lịch.
+    std::vector<Task> cyclicTasks{
+        {"A", "Task A", "OOP", std::nullopt, 30, 30,
+         Priority::Mid, TaskStatus::Todo, {"B"}},
+        {"B", "Task B", "OOP", std::nullopt, 30, 30,
+         Priority::Mid, TaskStatus::Todo, {"A"}}
+    };
+    const SchedulingResult cycleResult = scheduler.createProposal({
+        cyclicTasks, Schedule{}, now, planningEnd
+    });
+    check(cycleResult.status == SchedulingStatus::Infeasible,
+          "cyclic dependency graph must be infeasible");
+    check(std::any_of(cycleResult.reasons.begin(), cycleResult.reasons.end(),
+                      [](const std::string& reason) {
+                          return reason.find("cycle") != std::string::npos;
+                      }),
+          "cycle must be reported in failure reasons");
+
     std::cout
         << "PASS: five tasks scheduled without overlap\n"
         << "Created sessions: " << sessions.size() << '\n';
