@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "title": "C++20 & C++23 Standard Library Reference - cppreference",
+      "url": "https://en.cppreference.com/w/cpp",
+      "snippet": "Comprehensive documentation for modern C++ features including std::format, std::expected, std::chrono, and RAII smart pointers."
+    },
+    {
+      "title": "SQLite C/C++ Interface and Prepared Statements",
+      "url": "https://www.sqlite.org/c3ref/intro.html",
+      "snippet": "Guide to sqlite3_open, sqlite3_prepare_v2, parameter binding, foreign key enforcement, and transaction management."
+    },
+    {
+      "title": "Topological Sorting and Kahn's Algorithm for Task Scheduling",
+      "url": "https://en.wikipedia.org/wiki/Topological_sorting",
+      "snippet": "Scheduling dependent tasks in a Directed Acyclic Graph (DAG) while detecting dependency cycles."
+    },
+    {
+      "title": "Object-Oriented Design Patterns: Repository & Strategy",
+      "url": "https://refactoring.guru/design-patterns",
+      "snippet": "Decoupling domain models from persistence layers using ITaskRepository and priority scheduling strategies."
+    }
+  ]
+}

@@ -177,7 +177,27 @@ if(BUILD_TESTING)
             target_link_libraries(memory_tool_test PRIVATE SQLite::SQLite3)
         endif()
         add_test(NAME memory_tool COMMAND memory_tool_test)
+
+        add_executable(sqlite_task_repository_test
+            tests/sqlite_task_repository_test.cpp
+            src/models/sqlite_task_repository.cpp
+            src/models/Task.cpp
+            src/tools/memory_tool.cpp
+        )
+        if(TARGET SQLite3::SQLite3)
+            target_link_libraries(sqlite_task_repository_test PRIVATE SQLite3::SQLite3)
+        elseif(TARGET SQLite::SQLite3)
+            target_link_libraries(sqlite_task_repository_test PRIVATE SQLite::SQLite3)
+        endif()
+        add_test(NAME sqlite_task_repository COMMAND sqlite_task_repository_test)
     endif()
+
+    add_executable(web_search_tool_test
+        tests/web_search_tool_test.cpp
+        src/tools/web_search_tool.cpp
+    )
+    target_link_libraries(web_search_tool_test PRIVATE CURL::libcurl)
+    add_test(NAME web_search_tool COMMAND web_search_tool_test)
 
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
