@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <concepts>
@@ -24,6 +23,10 @@ public:
     // (string literal hoặc chuỗi thành viên ổn định, không dùng chuỗi cục bộ).
     virtual std::string_view name() const noexcept = 0;
     virtual std::string_view description() const noexcept = 0;
+
+    // Mô tả schema tham số đầu vào (JSON Schema) để LLM sinh lời gọi chính xác.
+    // Mặc định trả về schema rỗng "{}" nếu tool không khai báo chi tiết.
+    virtual std::string_view schema() const noexcept { return "{}"; }
 
     // input chỉ được mượn trong lời gọi; Tool muốn giữ lại phải tự copy.
     // Lỗi nghiệp vụ trả success=false. Tool ghi dữ liệu vẫn phải tuân thủ
