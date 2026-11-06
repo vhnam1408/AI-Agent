@@ -199,6 +199,22 @@ if(BUILD_TESTING)
     target_link_libraries(web_search_tool_test PRIVATE CURL::libcurl)
     add_test(NAME web_search_tool COMMAND web_search_tool_test)
 
+    add_executable(ics_exporter_tool_test
+        tests/ics_exporter_tool_test.cpp
+        src/tools/ics_exporter_tool.cpp
+        src/tools/web_search_tool.cpp
+        src/harness/trajectory.cpp
+    )
+    target_link_libraries(ics_exporter_tool_test PRIVATE CURL::libcurl)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_libraries(ics_exporter_tool_test PRIVATE stdc++exp)
+    endif()
+    add_test(
+        NAME ics_exporter_tool
+        COMMAND ics_exporter_tool_test
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
     add_executable(ollama_client_smoke_test
         tests/ollama_client_smoke_test.cpp
         src/client/ollama_client.cpp
