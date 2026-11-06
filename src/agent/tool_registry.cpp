@@ -1,54 +1,50 @@
 #include "ToolRegistry.h"
 
+#include <nlohmann/json.hpp>
+
 #include <algorithm>
+#include <chrono>
 #include <stdexcept>
 
 namespace edu_schedule {
+namespace {
 
-// Đăng ký một công cụ (tool) mới vào hệ thống quản lý registry.
-// Nhận vào một std::unique_ptr<ITool> để chuyển giao toàn bộ quyền sở hữu (ownership) cho registry.
+using json = nlohmann::json;
+
+} // namespace
+
 void ToolRegistry::registerTool(std::unique_ptr<ITool> tool) {
-    // 1. Kiểm tra con trỏ tool truyền vào không được rỗng (null).
     if (!tool) {
         throw std::invalid_argument("ToolRegistry: tool cannot be null");
     }
 
-    // 2. Kiểm tra tên của công cụ không được để trống.
     const std::string_view toolName = tool->name();
     if (toolName.empty()) {
         throw std::invalid_argument("ToolRegistry: tool name cannot be empty");
     }
 
-    // 3. Kiểm tra xem công cụ với tên này đã tồn tại trong registry chưa để tránh đăng ký trùng lặp.
     const std::string key(toolName);
     if (tools_.contains(key)) {
         throw std::runtime_error("ToolRegistry: duplicate tool: " + key);
     }
 
-    // Chuyển giao quyền sở hữu (move ownership) của công cụ vào registry.
-    // Lưu ý về chính sách bảo mật: Công cụ mới đăng ký mặc định sẽ ở trạng thái bị từ chối (denied)
-    // cho đến khi được cấp quyền rõ ràng thông qua hàm allowTool().
     tools_.emplace(key, std::move(tool));
 }
 
-// Tìm kiếm công cụ theo tên (phiên bản non-const).
-// Trả về con trỏ thô (raw pointer) trỏ tới công cụ nếu tìm thấy, hoặc nullptr nếu không tồn tại.
-// Lưu ý: Con trỏ trả về là con trỏ mượn (borrowed), vòng đời phụ thuộc vào registry.
 ITool* ToolRegistry::findTool(std::string_view name) {
     const auto it = tools_.find(std::string(name));
     return it == tools_.end() ? nullptr : it->second.get();
 }
 
-// Tìm kiếm công cụ theo tên (phiên bản const).
-// Trả về con trỏ const trỏ tới công cụ nếu tìm thấy, hoặc nullptr nếu không tồn tại.
 const ITool* ToolRegistry::findTool(std::string_view name) const {
     const auto it = tools_.find(std::string(name));
     return it == tools_.end() ? nullptr : it->second.get();
 }
 
-// Cấp quyền cho phép một công cụ được thực thi (đưa vào whitelist).
-// Nếu công cụ đang nằm trong danh sách cấm (deniedTools_), nó sẽ được gỡ khỏi danh sách cấm
-// và thêm vào danh sách cho phép (allowedTools_).
+bool ToolRegistry::hasTool(std::string_view name) const {
+    return tools_.contains(std::string(name));
+}
+
 void ToolRegistry::allowTool(std::string_view name) {
     if (name.empty()) {
         throw std::invalid_argument("ToolRegistry: tool name cannot be empty");
@@ -58,8 +54,6 @@ void ToolRegistry::allowTool(std::string_view name) {
     allowedTools_.insert(key);
 }
 
-// Từ chối hoặc thu hồi quyền thực thi của một công cụ (đưa vào blacklist).
-// Gỡ công cụ khỏi danh sách cho phép (allowedTools_) và thêm vào danh sách cấm (deniedTools_).
 void ToolRegistry::denyTool(std::string_view name) {
     if (name.empty()) {
         throw std::invalid_argument("ToolRegistry: tool name cannot be empty");
@@ -69,17 +63,25 @@ void ToolRegistry::denyTool(std::string_view name) {
     deniedTools_.insert(key);
 }
 
-// Xóa sạch toàn bộ chính sách công cụ (reset cả danh sách cho phép và danh sách từ chối).
-// Áp dụng nguyên tắc "từ chối mặc định" (default-deny): khi danh sách cho phép rỗng,
-// không có công cụ nào có quyền thực thi trừ khi được cấp quyền lại bằng allowTool().
+void ToolRegistry::allowAllTools() {
+    deniedTools_.clear();
+    for (const auto& [name, _] : tools_) {
+        allowedTools_.insert(name);
+    }
+}
+
+void ToolRegistry::denyAllTools() {
+    allowedTools_.clear();
+    for (const auto& [name, _] : tools_) {
+        deniedTools_.insert(name);
+    }
+}
+
 void ToolRegistry::clearToolPolicy() noexcept {
     allowedTools_.clear();
     deniedTools_.clear();
 }
 
-// Kiểm tra xem một công cụ có được phép thực thi hay không theo chính sách bảo mật hiện tại.
-// Điều kiện hợp lệ: công cụ phải tồn tại trong registry, KHÔNG nằm trong danh sách cấm (deniedTools_)
-// và PHẢI nằm trong danh sách cho phép (allowedTools_).
 bool ToolRegistry::isToolAllowed(std::string_view name) const {
     const std::string key(name);
     if (!tools_.contains(key) || deniedTools_.contains(key)) {
@@ -88,38 +90,168 @@ bool ToolRegistry::isToolAllowed(std::string_view name) const {
     return allowedTools_.contains(key);
 }
 
-// Thực thi công cụ với tên chỉ định và chuỗi dữ liệu đầu vào.
-// Quy trình xử lý:
-// 1. Tìm kiếm công cụ trong registry; nếu không tìm thấy, trả về lỗi "Tool not found".
-// 2. Kiểm tra chính sách bảo mật; nếu công cụ bị cấm, trả về lỗi "Tool execution denied by policy".
-// 3. Nếu hợp lệ, tiến hành gọi phương thức execute() của công cụ và trả về kết quả.
 ToolResult ToolRegistry::execute(std::string_view name, std::string_view input) {
+    const auto start = std::chrono::steady_clock::now();
+
     ITool* tool = findTool(name);
     if (tool == nullptr) {
-        return {false, "Tool not found: " + std::string(name)};
+        ToolResult res{false, "Tool not found: " + std::string(name)};
+        if (executionHook_) {
+            executionHook_(name, input, res, 0);
+        }
+        return res;
     }
+
     if (!isToolAllowed(name)) {
-        return {false, "Tool execution denied by policy: " + std::string(name)};
+        ToolResult res{false, "Tool execution denied by policy: " + std::string(name)};
+        if (executionHook_) {
+            executionHook_(name, input, res, 0);
+        }
+        return res;
     }
-    return tool->execute(input);
+
+    ToolResult result;
+    try {
+        result = tool->execute(input);
+    } catch (const std::exception& error) {
+        result = {false, "Tool exception: " + std::string(error.what())};
+    } catch (...) {
+        result = {false, "Tool exception: unknown error"};
+    }
+
+    const auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - start).count();
+
+    // Tự động đồng bộ kết quả vào TaskRepository nếu có dữ liệu hợp lệ
+    if (result.success && autoSyncResults_ && taskRepository_) {
+        syncToolResultToRepository(result.message);
+    }
+
+    // Thông báo cho Execution Hook
+    if (executionHook_) {
+        executionHook_(name, input, result, durationMs);
+    }
+
+    return result;
 }
 
-// Lấy danh sách tên của tất cả các công cụ đã được đăng ký trong registry.
-// Danh sách trả về được sắp xếp theo thứ tự bảng chữ cái (alphabetical) để đảm bảo tính nhất quán.
 std::vector<std::string> ToolRegistry::listTools() const {
     std::vector<std::string> names;
     names.reserve(tools_.size());
-    for (const auto& [name, tool] : tools_) {
-        (void)tool;
+    for (const auto& [name, _] : tools_) {
         names.push_back(name);
     }
     std::sort(names.begin(), names.end());
     return names;
 }
 
-// Trả về tổng số lượng công cụ hiện có trong registry.
+std::vector<std::string> ToolRegistry::listAllowedTools() const {
+    std::vector<std::string> names;
+    for (const auto& [name, _] : tools_) {
+        if (isToolAllowed(name)) {
+            names.push_back(name);
+        }
+    }
+    std::sort(names.begin(), names.end());
+    return names;
+}
+
 std::size_t ToolRegistry::size() const noexcept {
     return tools_.size();
+}
+
+std::string ToolRegistry::exportToolsSchemaJson() const {
+    json arr = json::array();
+    const auto names = listTools();
+    for (const auto& name : names) {
+        const auto* tool = findTool(name);
+        if (!tool) continue;
+
+        json item;
+        item["name"] = std::string(tool->name());
+        item["description"] = std::string(tool->description());
+        item["allowed"] = isToolAllowed(tool->name());
+
+        std::string schemaStr(tool->schema());
+        try {
+            item["schema"] = json::parse(schemaStr);
+        } catch (...) {
+            item["schema"] = schemaStr;
+        }
+        arr.push_back(item);
+    }
+    return arr.dump(2);
+}
+
+void ToolRegistry::setTaskRepository(std::shared_ptr<ITaskRepository> repository) {
+    taskRepository_ = std::move(repository);
+}
+
+std::shared_ptr<ITaskRepository> ToolRegistry::getTaskRepository() const noexcept {
+    return taskRepository_;
+}
+
+bool ToolRegistry::hasTaskRepository() const noexcept {
+    return taskRepository_ != nullptr;
+}
+
+void ToolRegistry::setAutoSyncResults(bool enable) noexcept {
+    autoSyncResults_ = enable;
+}
+
+bool ToolRegistry::isAutoSyncResults() const noexcept {
+    return autoSyncResults_;
+}
+
+void ToolRegistry::setExecutionHook(ToolExecutionHook hook) {
+    executionHook_ = std::move(hook);
+}
+
+void ToolRegistry::syncToolResultToRepository(std::string_view outputJson) {
+    if (!taskRepository_) return;
+
+    try {
+        const auto parsed = json::parse(outputJson);
+        if (!parsed.is_object()) return;
+
+        // Nhận diện mảng "subtasks" hoặc "tasks"
+        const json* taskArray = nullptr;
+        if (parsed.contains("subtasks") && parsed["subtasks"].is_array()) {
+            taskArray = &parsed["subtasks"];
+        } else if (parsed.contains("tasks") && parsed["tasks"].is_array()) {
+            taskArray = &parsed["tasks"];
+        }
+
+        if (!taskArray) return;
+
+        for (const auto& item : *taskArray) {
+            if (!item.is_object()) continue;
+            if (!item.contains("id") || !item["id"].is_string()) continue;
+
+            Task task;
+            task.id = item["id"].get<std::string>();
+            task.title = item.value("title", task.id);
+            task.courseId = item.value("course_id", "");
+            task.estimatedMinutes = item.value("estimated_minutes", 0);
+            task.remainingMinutes = item.value("remaining_minutes", task.estimatedMinutes);
+
+            if (item.contains("dependencies") && item["dependencies"].is_array()) {
+                for (const auto& dep : item["dependencies"]) {
+                    if (dep.is_string()) {
+                        task.dependencies.push_back(dep.get<std::string>());
+                    }
+                }
+            }
+
+            if (taskRepository_->exists(task.id)) {
+                taskRepository_->update(task);
+            } else {
+                taskRepository_->add(task);
+            }
+        }
+    } catch (...) {
+        // Bỏ qua lỗi parse nếu output không phải định dạng JSON tương thích
+    }
 }
 
 } // namespace edu_schedule
